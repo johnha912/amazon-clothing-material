@@ -1,0 +1,15 @@
+# Raw Amazon Reviews 2023 files are several GB; download them locally (see README)
+data/
+*.jsonl
+*.jsonl.gz
+
+# Quarto render cache
+.quarto/
+
+# Python
+__pycache__/
+.venv/
+.ipynb_checkpoints/
+
+# Early local draft of the proposal (superseded by proposal/)
+proposal-draft-*.md
