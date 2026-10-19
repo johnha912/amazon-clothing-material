@@ -2,9 +2,7 @@
 
 Final project for CS6140 Machine Learning (Fall 2026, Northeastern University, Professor Mohammad Toutiaee).
 
-**Authors:** Nguyen Ha (M.S. in Computer Science) and Yanglin Hu (M.S. in Data Science)
-
-The full proposal is in [`proposal/Proposal_HaHu.pdf`](proposal/Proposal_HaHu.pdf).
+**Authors:** Nguyen Ha (M.S. in Computer Science), Yanglin Hu (M.S. in Data Science), and Rui Song (M.S. in Computer Science)
 
 ## Problem
 
@@ -43,7 +41,7 @@ Top dominant materials: polyester (24.3%), cotton (22.0%), leather (14.3%), and 
 
 ## Setup
 
-Requirements: Python 3.10 or later and [Quarto](https://quarto.org/) (only to rebuild the proposal PDF). The exploration script uses only the Python standard library.
+Requirements: Python 3.10 or later. The exploration script uses only the Python standard library.
 
 ```bash
 git clone https://github.com/johnha912/amazon-clothing-material.git
@@ -55,9 +53,6 @@ curl -sL https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve
 
 # Reproduce the preliminary results
 python explore_sample.py data/meta_head.jsonl
-
-# Rebuild the proposal PDF
-quarto render proposal/Proposal_HaHu.qmd
 ```
 
 The `data/` folder is ignored by Git, so raw data never gets committed.
@@ -67,9 +62,6 @@ The `data/` folder is ignored by Git, so raw data never gets committed.
 ```
 .
 ├── explore_sample.py        # material coverage statistics on a metadata sample
-├── proposal/
-│   ├── Proposal_HaHu.qmd    # proposal source (Quarto)
-│   └── Proposal_HaHu.pdf    # submitted proposal
 └── data/                    # local data, not committed
 ```
 

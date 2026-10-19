@@ -11,5 +11,7 @@ __pycache__/
 .venv/
 .ipynb_checkpoints/
 
-# Early local draft of the proposal (superseded by proposal/)
+# Proposal drafts and PDFs stay local; the proposal is submitted outside the repo
+proposal/
 proposal-draft-*.md
+*.pdf
