@@ -61,6 +61,7 @@ The `data/` folder is ignored by Git, so raw data never gets committed.
 
 ```
 .
+├── pipeline.py              # shared method chain: load("data/...jsonl") -> tidy, labeled DataFrame
 ├── explore_sample.py        # material coverage statistics on a metadata sample
 └── data/                    # local data, not committed
 ```
