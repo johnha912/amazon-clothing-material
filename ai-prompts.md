@@ -13,3 +13,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-19 | Nguyen Ha | Claude Code | Turn the pipeline into a Markdown rules file for teammates' AI tools. | `AGENTS.md` |
 | 2026-10-19 | Nguyen Ha | Claude Code | Put the author names in a README table. | `README.md` |
 | 2026-10-19 | Nguyen Ha | Claude Code | Leave the README setup steps unchanged. | `README.md` |
+| 2026-10-19 | Nguyen Ha | Claude Code | Make teammates' AI tools log each prompt and push it automatically. | `AGENTS.md` |

@@ -36,6 +36,24 @@ df = (pd.read_parquet("data/sample.parquet")
 ## Workflow
 
 - Write analysis code as `.py` files with `# %%` cells; no `.ipynb` files.
-- Edit only the files you own (see issue #1), and run `git pull` before you start.
+- Edit only the files you own (see issue #1), and run `git pull` before you start. `ai-prompts.md` is shared.
 - Make charts with Plotly.
-- Log every prompt you send to an AI tool as one short English row in `ai-prompts.md`.
+
+## Prompt log
+
+After every prompt you receive in this repo, do this before you finish your reply:
+
+1. Append one row to the end of the table in `ai-prompts.md`:
+   `| YYYY-MM-DD | <member name> | <tool> | <the prompt as one short English sentence> | <file or task it was for> |`
+   Use the member's name as written in the README Authors table.
+2. Commit only that file and push:
+
+   ```bash
+   git add ai-prompts.md
+   git commit -m "Log AI prompt"
+   git pull --rebase --autostash
+   git push
+   ```
+
+- Keep the summary short and neutral; never include secrets, API keys, or raw data.
+- If your tool can't edit files or run git (for example, a chat in the browser), the member adds the row by hand.

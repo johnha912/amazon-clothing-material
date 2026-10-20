@@ -1,0 +1,2 @@
+# Everyone appends to the prompt log; keep both sides' rows instead of conflicting
+ai-prompts.md merge=union
