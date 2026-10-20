@@ -1,0 +1,26 @@
+# Python 3.12 or later. Install with: pip install -r requirements.txt
+
+# Data
+numpy==2.5.4
+pandas==3.0.6
+pyarrow==26.0.0
+scipy==1.18.1
+huggingface_hub==2.2.0
+
+# Analysis and plots
+plotly==7.1.0
+kaleido==1.5.0
+statsmodels==0.15.0
+
+# Modeling
+scikit-learn==1.9.1
+xgboost==3.4.1
+torch==2.14.1
+transformers==5.20.2
+accelerate==1.15.0
+
+# Notebooks, report, and demo
+jupyter==1.1.1
+jupytext==1.19.6
+quarto-cli==1.10.19
+streamlit==1.66.0

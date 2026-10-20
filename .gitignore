@@ -15,3 +15,6 @@ __pycache__/
 proposal/
 proposal-draft-*.md
 *.pdf
+
+# Trained models stay local
+models/

@@ -41,7 +41,7 @@ Top dominant materials: polyester (24.3%), cotton (22.0%), leather (14.3%), and 
 
 ## Setup
 
-Requirements: Python 3.10 or later. The exploration script uses only the Python standard library.
+Requirements: Python 3.12 or later. Install the project libraries with `pip install -r requirements.txt`.
 
 ```bash
 git clone https://github.com/johnha912/amazon-clothing-material.git
