@@ -2,7 +2,13 @@
 
 Final project for CS6140 Machine Learning (Fall 2026, Northeastern University, Professor Mohammad Toutiaee).
 
-**Authors:** Nguyen Ha (M.S. in Computer Science), Yanglin Hu (M.S. in Data Science), and Rui Song (M.S. in Computer Science)
+## Authors
+
+| Name | Program | GitHub |
+|---|---|---|
+| Nguyen Ha | M.S. in Computer Science | [@johnha912](https://github.com/johnha912) |
+| Yanglin Hu | M.S. in Data Science | [@Elliothu-oss](https://github.com/Elliothu-oss) |
+| Rui Song | M.S. in Computer Science | [@ruisnow-e](https://github.com/ruisnow-e) |
 
 ## Problem
 
@@ -61,7 +67,7 @@ The `data/` folder is ignored by Git, so raw data never gets committed.
 
 ```
 .
-├── pipeline.py              # shared method chain: load("data/...jsonl") -> tidy, labeled DataFrame
+├── AGENTS.md                # rules for AI assistants: data, pandas method-chaining style, workflow
 ├── explore_sample.py        # material coverage statistics on a metadata sample
 └── data/                    # local data, not committed
 ```
