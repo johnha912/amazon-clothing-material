@@ -67,7 +67,8 @@ The `data/` folder is ignored by Git, so raw data never gets committed.
 
 ```
 .
-├── AGENTS.md                # rules for AI assistants: data, pandas method-chaining style, workflow
+├── AGENTS.md                # rules for AI assistants: ownership, labels, leakage, eval, agent roles
+├── docs/code-style.md       # full pandas method-chaining guide
 ├── explore_sample.py        # material coverage statistics on a metadata sample
 └── data/                    # local data, not committed
 ```

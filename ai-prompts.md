@@ -14,3 +14,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-19 | Nguyen Ha | Claude Code | Put the author names in a README table. | `README.md` |
 | 2026-10-19 | Nguyen Ha | Claude Code | Leave the README setup steps unchanged. | `README.md` |
 | 2026-10-19 | Nguyen Ha | Claude Code | Make teammates' AI tools log each prompt and push it automatically. | `AGENTS.md` |
+| 2026-10-21 | Nguyen Ha | Claude Code | Revise AGENTS.md: add agent roles, Task B leakage rules, label rules, shared eval, status, and ownership; shorten code style. | `AGENTS.md`, `docs/code-style.md` |
