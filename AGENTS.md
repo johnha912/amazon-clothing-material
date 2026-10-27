@@ -23,7 +23,7 @@ Edit only the files you own, and run `git pull` before you start. `ai-prompts.md
 
 | Member | Owns |
 |---|---|
-| Nguyen Ha | `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/eda.py`, `report/` (including `report/sections/related_implementations.md`) |
+| Nguyen Ha | `analysis/load_data.py`, `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/eda.py`, `report/` (including `report/sections/related_implementations.md`) |
 | Yanglin Hu | `analysis/material_bert.py` |
 | Rui Song | `src/`, `app/`, `report/sections/related_work.md` |
 

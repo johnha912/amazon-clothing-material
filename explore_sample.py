@@ -26,25 +26,26 @@ def dominant(text):
     hits = [(text.find(m), m) for m in MATERIALS if re.search(rf"\b{m}\b", text)]
     return (ALIAS.get(min(hits)[1], min(hits)[1]), False) if hits else (None, False)
 
-rows = [json.loads(l) for l in open(sys.argv[1], encoding="utf-8")]
-n = len(rows)
-detail = sum(any(k in (r.get("details") or {}) for k in DETAIL_KEYS) for r in rows)
-labels, with_pct = collections.Counter(), 0
-for r in rows:
-    d = r.get("details") or {}
-    text = " ".join([*(str(d[k]) for k in DETAIL_KEYS if k in d), *r.get("features", [])])
-    m, pct = dominant(text)
-    if m:
-        labels[m] += 1
-        with_pct += pct
-labeled = sum(labels.values())
-print(f"n={n} detail_field={detail} ({detail/n:.1%}) any_material={labeled} ({labeled/n:.1%}) "
-      f"with_percent={with_pct} ({with_pct/n:.1%}) price={sum(r.get('price') is not None for r in rows)/n:.1%} "
-      f"parents={len({r['parent_asin'] for r in rows})}")
-for m, c in labels.most_common(12):
-    print(f"  {m:16s} {c:5d} {c/labeled:.1%}")
+if __name__ == "__main__":
+    rows = [json.loads(l) for l in open(sys.argv[1], encoding="utf-8")]
+    n = len(rows)
+    detail = sum(any(k in (r.get("details") or {}) for k in DETAIL_KEYS) for r in rows)
+    labels, with_pct = collections.Counter(), 0
+    for r in rows:
+        d = r.get("details") or {}
+        text = " ".join([*(str(d[k]) for k in DETAIL_KEYS if k in d), *r.get("features", [])])
+        m, pct = dominant(text)
+        if m:
+            labels[m] += 1
+            with_pct += pct
+    labeled = sum(labels.values())
+    print(f"n={n} detail_field={detail} ({detail/n:.1%}) any_material={labeled} ({labeled/n:.1%}) "
+          f"with_percent={with_pct} ({with_pct/n:.1%}) price={sum(r.get('price') is not None for r in rows)/n:.1%} "
+          f"parents={len({r['parent_asin'] for r in rows})}")
+    for m, c in labels.most_common(12):
+        print(f"  {m:16s} {c:5d} {c/labeled:.1%}")
 
-assert dominant("90% Polyester, 10% Spandex") == ("polyester", True)
-assert dominant("Imported, 100% cotton") == ("cotton", True)
-assert dominant("Genuine leather upper") == ("leather", False)
-assert dominant("Zipper closure") == (None, False)
+    assert dominant("90% Polyester, 10% Spandex") == ("polyester", True)
+    assert dominant("Imported, 100% cotton") == ("cotton", True)
+    assert dominant("Genuine leather upper") == ("leather", False)
+    assert dominant("Zipper closure") == (None, False)

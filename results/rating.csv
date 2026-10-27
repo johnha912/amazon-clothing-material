@@ -1,0 +1,4 @@
+model,rmse,mae,n_train,n_test,command,seed,data_version
+mean_baseline,0.5863,0.3834,8046,1954,python analysis/rating.py,42,"data/meta_head.jsonl pilot (10,000 rows)"
+random_forest,0.5868,0.3868,8046,1954,python analysis/rating.py,42,"data/meta_head.jsonl pilot (10,000 rows)"
+xgboost,0.5777,0.3774,8046,1954,python analysis/rating.py,42,"data/meta_head.jsonl pilot (10,000 rows)"

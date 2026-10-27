@@ -1,0 +1,448 @@
+{
+ "cards": [
+  {
+   "dot": "rose",
+   "items": [
+    "Composition strings are stripped from `text` \u2014 the label is parsed from them, so Task A is inference, not lookup",
+    "Task A never uses average_rating or rating_number as features",
+    "Task B: rating_number may only filter or weight rows; no feature derives from the item's own ratings or reviews"
+   ],
+   "title": "Leakage rules (AGENTS.md)"
+  },
+  {
+   "dot": "emerald",
+   "items": [
+    "Rui Song (she/her): src/ pipeline, Streamlit app, related work \u2014 sample due Oct 28 (50k) and Nov 1 (~250k)",
+    "Nguyen Ha: TF-IDF models, rating models, EDA, report integration and meeting notes",
+    "Yanglin Hu: DistilBERT material model; the merged macro-F1 table is a Nguyen + Yanglin deliverable"
+   ],
+   "title": "Ownership"
+  },
+  {
+   "dot": "orange",
+   "items": [
+    "Train on split == 'train', report on split == 'test', random_state=42 everywhere",
+    "Every published number carries its command, seed, and data version so three authors' results can be merged and re-checked",
+    "Pilot (10k): TF-IDF LogReg macro-F1 0.360, SVM 0.357; XGBoost rating RMSE 0.578 vs 0.586 mean baseline"
+   ],
+   "title": "Evaluation discipline"
+  }
+ ],
+ "diagram_type": "dataflow",
+ "flows": [
+  {
+   "classification": "raw metadata",
+   "from": "hf",
+   "id": "hf-pilot",
+   "label": "first 10k records",
+   "to": "pilot",
+   "variant": "default"
+  },
+  {
+   "classification": "raw metadata",
+   "from": "hf",
+   "id": "hf-sample",
+   "label": "full stream",
+   "to": "makesample",
+   "variant": "emphasis",
+   "route": "straight"
+  },
+  {
+   "classification": "shared dominant()",
+   "from": "labels",
+   "id": "labels-rule",
+   "label": "label rule",
+   "to": "makesample",
+   "variant": "default",
+   "fromSide": "left",
+   "toSide": "left",
+   "via": [
+    [
+     200,
+     499
+    ],
+    [
+     200,
+     271
+    ]
+   ],
+   "labelAt": [
+    228,
+    429
+   ]
+  },
+  {
+   "classification": "compositions stripped",
+   "from": "makesample",
+   "id": "sample-out",
+   "label": "labeled rows",
+   "to": "sample",
+   "variant": "emphasis",
+   "labelAt": [
+    262,
+    328
+   ]
+  },
+  {
+   "classification": "descriptive stats",
+   "from": "sample",
+   "id": "sample-eda",
+   "label": "all rows",
+   "to": "eda",
+   "variant": "default",
+   "via": [
+    [
+     388,
+     385
+    ],
+    [
+     388,
+     157
+    ]
+   ],
+   "labelAt": [
+    425,
+    140
+   ]
+  },
+  {
+   "classification": "Task A input",
+   "from": "sample",
+   "id": "sample-tfidf",
+   "label": "text",
+   "to": "tfidf",
+   "variant": "emphasis",
+   "via": [
+    [
+     455,
+     385
+    ],
+    [
+     455,
+     499
+    ]
+   ],
+   "labelAt": [
+    455,
+    445
+   ]
+  },
+  {
+   "classification": "Task A input",
+   "from": "sample",
+   "id": "sample-bert",
+   "label": "text",
+   "to": "bert",
+   "variant": "default",
+   "via": [
+    [
+     440,
+     385
+    ],
+    [
+     440,
+     271
+    ]
+   ],
+   "labelAt": [
+    435,
+    300
+   ]
+  },
+  {
+   "classification": "Task B input",
+   "from": "sample",
+   "id": "sample-rating",
+   "label": "features",
+   "to": "rating",
+   "variant": "default",
+   "labelAt": [
+    415,
+    404
+   ]
+  },
+  {
+   "classification": "results/eda/",
+   "from": "eda",
+   "id": "eda-report",
+   "label": "charts + findings",
+   "to": "report",
+   "variant": "default"
+  },
+  {
+   "classification": "material_tfidf.csv",
+   "from": "tfidf",
+   "id": "tfidf-results",
+   "label": "macro-F1",
+   "to": "results",
+   "variant": "emphasis",
+   "via": [
+    [
+     618,
+     499
+    ],
+    [
+     618,
+     271
+    ]
+   ],
+   "labelAt": [
+    590,
+    440
+   ]
+  },
+  {
+   "classification": "material_bert.csv",
+   "from": "bert",
+   "id": "bert-results",
+   "label": "macro-F1",
+   "to": "results",
+   "variant": "default",
+   "route": "straight",
+   "labelAt": [
+    637,
+    250
+   ]
+  },
+  {
+   "classification": "rating.csv",
+   "from": "rating",
+   "id": "rating-results",
+   "label": "RMSE/MAE",
+   "to": "results",
+   "variant": "default",
+   "via": [
+    [
+     645,
+     385
+    ],
+    [
+     645,
+     271
+    ]
+   ],
+   "labelAt": [
+    662,
+    330
+   ]
+  },
+  {
+   "classification": "all three authors",
+   "from": "results",
+   "id": "results-report",
+   "label": "merged tables",
+   "to": "report",
+   "variant": "emphasis",
+   "labelAt": [
+    745,
+    315
+   ]
+  },
+  {
+   "classification": "joblib",
+   "from": "tfidf",
+   "id": "tfidf-model",
+   "label": "trained pipeline",
+   "to": "model",
+   "variant": "default",
+   "route": "straight",
+   "labelAt": [
+    619,
+    543
+   ]
+  },
+  {
+   "classification": "prediction service",
+   "from": "model",
+   "id": "model-app",
+   "label": "loads model",
+   "to": "app",
+   "variant": "default",
+   "labelAt": [
+    745,
+    543
+   ]
+  }
+ ],
+ "meta": {
+  "output": ".archify/dataflow-project-pipeline-20261024-174457/project-pipeline.html",
+  "quality_profile": "showcase",
+  "repository": {
+   "url": "https://github.com/johnha912/amazon-clothing-material",
+   "revision": "0f8aebd732ededab368629e9f50d52e86141c4b6",
+   "provider": "github"
+  },
+  "title": "CS6140 Project Pipeline \u2014 Amazon Clothing Materials"
+ },
+ "nodes": [
+  {
+   "id": "hf",
+   "label": "Amazon Reviews 2023",
+   "row": 1,
+   "sources": [
+    {
+     "path": "README.md"
+    }
+   ],
+   "stage": 0,
+   "sublabel": "HF metadata \u00b7 ~7.2M products",
+   "tag": "Clothing, Shoes & Jewelry",
+   "type": "cloud"
+  },
+  {
+   "id": "pilot",
+   "label": "explore_sample.py",
+   "row": 0,
+   "sources": [
+    {
+     "path": "explore_sample.py"
+    }
+   ],
+   "stage": 1,
+   "sublabel": "10k pilot \u00b7 coverage stats",
+   "tag": "dominant() today",
+   "type": "backend"
+  },
+  {
+   "id": "makesample",
+   "label": "src/make_sample.py",
+   "row": 1,
+   "sources": [
+    {
+     "path": "AGENTS.md"
+    }
+   ],
+   "stage": 1,
+   "sublabel": "Rui \u00b7 sample by parent_asin hash",
+   "tag": "50k Oct 28 \u00b7 250k Nov 1",
+   "type": "backend",
+   "width": 124
+  },
+  {
+   "id": "labels",
+   "label": "src/labels.py",
+   "row": 3,
+   "sources": [
+    {
+     "path": "explore_sample.py"
+    },
+    {
+     "path": "AGENTS.md"
+    }
+   ],
+   "stage": 1,
+   "sublabel": "dominant() \u00b7 %-string labels only",
+   "tag": "~46% labeled",
+   "type": "backend",
+   "width": 132
+  },
+  {
+   "id": "sample",
+   "label": "data/sample.parquet",
+   "row": 2,
+   "sources": [
+    {
+     "path": "AGENTS.md"
+    }
+   ],
+   "stage": 1,
+   "sublabel": "9 columns \u00b7 split = train/test",
+   "tag": "never committed",
+   "type": "database",
+   "width": 122
+  },
+  {
+   "id": "eda",
+   "label": "analysis/eda.py",
+   "row": 0,
+   "stage": 2,
+   "sublabel": "Nguyen \u00b7 6 Plotly charts",
+   "tag": "rating \u00b7 price \u00b7 dept",
+   "type": "backend"
+  },
+  {
+   "id": "tfidf",
+   "label": "material_tfidf.py",
+   "row": 3,
+   "stage": 2,
+   "sublabel": "Nguyen \u00b7 TF-IDF + LogReg / SVM",
+   "tag": "Task A",
+   "type": "backend",
+   "width": 122
+  },
+  {
+   "id": "bert",
+   "label": "material_bert.py",
+   "row": 1,
+   "stage": 2,
+   "sublabel": "Yanglin \u00b7 fine-tuned DistilBERT",
+   "tag": "Task A",
+   "type": "backend",
+   "width": 122
+  },
+  {
+   "id": "rating",
+   "label": "analysis/rating.py",
+   "row": 2,
+   "stage": 2,
+   "sublabel": "Nguyen \u00b7 mean / RF / XGBoost",
+   "tag": "Task B",
+   "type": "backend"
+  },
+  {
+   "id": "report",
+   "label": "Report + presentation",
+   "row": 0,
+   "stage": 3,
+   "sublabel": "due Dec 6 \u00b7 streamed Dec 17",
+   "tag": "paragraph form",
+   "type": "frontend",
+   "width": 150
+  },
+  {
+   "id": "results",
+   "label": "results/*.csv",
+   "row": 1,
+   "stage": 3,
+   "sublabel": "macro-F1 \u00b7 RMSE \u00b7 MAE",
+   "tag": "+ command, seed, data version",
+   "type": "database",
+   "width": 118
+  },
+  {
+   "id": "model",
+   "label": "models/material_tfidf.joblib",
+   "row": 3,
+   "stage": 3,
+   "sublabel": "saved LogReg pipeline",
+   "tag": "never committed",
+   "type": "database",
+   "width": 195
+  },
+  {
+   "id": "app",
+   "label": "Streamlit demo app",
+   "row": 2,
+   "stage": 3,
+   "sublabel": "Rui \u00b7 paste listing \u2192 material",
+   "tag": "app/",
+   "type": "frontend",
+   "width": 122
+  }
+ ],
+ "schema_version": 1,
+ "stages": [
+  {
+   "label": "Source"
+  },
+  {
+   "label": "Sample & Labels"
+  },
+  {
+   "label": "Models & EDA"
+  },
+  {
+   "label": "Outputs"
+  }
+ ]
+}
