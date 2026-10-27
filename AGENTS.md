@@ -23,7 +23,7 @@ Edit only the files you own, and run `git pull` before you start. `ai-prompts.md
 
 | Member | Owns |
 |---|---|
-| Nguyen Ha | `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/eda.py`, `report/` |
+| Nguyen Ha | `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/eda.py`, `report/` (including `report/sections/related_implementations.md`) |
 | Yanglin Hu | `analysis/material_bert.py` |
 | Rui Song | `src/`, `app/`, `report/sections/related_work.md` |
 
@@ -61,7 +61,8 @@ One session = one role. State the role in your first message (for example "Role:
 |---|---|---|---|---|
 | PM | Nguyen Ha | Status section above, completeness of `ai-prompts.md` | Weekly status, merged results table, Statement of Contributions (from `git log` and the prompt log) | Completion 10, Conclusion 4 · Finished on Time 10 |
 | Data Pipeline | Rui Song | `src/`: `make_sample.py`, `labels.py` and its tests, `evaluate.py` | `data/sample.parquet` at each milestone, the shared evaluation every cited number comes from | Experimental Setup 8 · Data Processing 15 |
-| Literature | Rui Song | `report/sections/related_work.md` | 5–6 published papers and 2–3 Kaggle notebooks on this dataset, each with a URL | Related Work 11, Related Implementations 11, References 4 · Related Work 5 |
+| Literature | Rui Song | `report/sections/related_work.md` | 5–6 published papers on this dataset, each with a URL | Related Work 11, References 4 · Related Work 5 |
+| Implementations | Nguyen Ha | `report/sections/related_implementations.md` | 2–3 Kaggle notebooks on this dataset, each with a URL, what it did, and why our method is better | Related Implementations 11 |
 | Report & Demo | Nguyen Ha (report), Rui Song (app) | `report/`, `app/` | Paragraph-form report, results table and plots, working demo, 5-minute script | Introduction 5, Proposed Method (early) 5, Results 11 · Introduction 5, Presentation Style 20 |
 
 ### Feature pipeline

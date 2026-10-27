@@ -17,3 +17,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-21 | Nguyen Ha | Claude Code | Revise AGENTS.md: add agent roles, Task B leakage rules, label rules, shared eval, status, and ownership; shorten code style. | `AGENTS.md`, `docs/code-style.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Upgrade the agent team in AGENTS.md to cover every report and presentation rubric block, with cross-tool audits and compute routing. | `AGENTS.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Commit and push the AGENTS.md agent-team upgrade. | Git |
+| 2026-10-27 | Nguyen Ha | Claude Code | Move the Kaggle related-implementations work from Rui Song to Nguyen Ha. | `AGENTS.md` |
