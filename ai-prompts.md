@@ -18,3 +18,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Nguyen Ha | Claude Code | Upgrade the agent team in AGENTS.md to cover every report and presentation rubric block, with cross-tool audits and compute routing. | `AGENTS.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Commit and push the AGENTS.md agent-team upgrade. | Git |
 | 2026-10-27 | Nguyen Ha | Claude Code | Move the Kaggle related-implementations work from Rui Song to Nguyen Ha. | `AGENTS.md` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Add the missing Modeling role with Yanglin Hu as lead to AGENTS.md. | `AGENTS.md` |
