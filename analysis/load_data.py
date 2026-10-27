@@ -23,9 +23,10 @@ from explore_sample import DETAIL_KEYS, dominant  # noqa: E402  the one labeling
 
 DATA_DIR = ROOT / "data"
 SEED = 42
-# Any clause holding a percentage, in either order ("90% Polyester",
-# "Polyester 88%"), so no composition string survives into the model input.
-PCT_SEGMENT = re.compile(r"[^.;\n◆•|]*\d{1,3}(?:\.\d+)?\s*%[^.;\n◆•|]*")
+# Any comma- or sentence-delimited clause holding a percentage, in either order
+# ("90% Polyester", "Polyester 88%"), so no composition string survives into the
+# model input while the rest of the listing (title, other bullets) is kept.
+PCT_SEGMENT = re.compile(r"[^.;,\n◆•|]*\d{1,3}(?:\.\d+)?\s*%[^.;,\n◆•|]*")
 
 
 def strip_composition(text: str) -> str:
@@ -45,7 +46,8 @@ def from_meta_head(path: Path) -> pd.DataFrame:
         parts = [str(row.get("title") or "")]
         parts += [str(f) for f in (row.get("features") or [])]
         parts += [str(d) for d in (row.get("description") or [])]
-        return strip_composition(" ".join(parts))
+        # ". " keeps a clause in one field from swallowing the next field
+        return strip_composition(". ".join(parts))
 
     def department(row) -> str:
         cats = [c for c in (row.get("categories") or []) if isinstance(c, str)]
@@ -83,7 +85,10 @@ if __name__ == "__main__":
     # Leakage self-check: no labeled row may keep a composition string in `text`.
     assert "%" not in strip_composition("Soft. 90% Polyester, 10% Spandex. Machine wash")
     assert "88%" not in strip_composition("Material: Polyester 88% & Spandex 12% ◆Pattern: solid")
+    assert strip_composition("Velvet Dress. 95% Polyester, 5% Spandex. Hand wash").startswith("Velvet Dress")
     df, version = load_data()
-    left = df.dropna(subset=["material"]).text.str.contains(r"\d\s*%", regex=True).sum()
-    print(f"{version}: labeled rows with a % left in text = {left}")
+    labeled = df.dropna(subset=["material"])
+    left = labeled.text.str.contains(r"\d\s*%", regex=True).sum()
+    empty = (labeled.text.fillna("").str.len() == 0).sum()
+    print(f"{version}: labeled rows with a % left in text = {left}, with empty text = {empty}")
     assert left == 0

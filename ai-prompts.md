@@ -22,3 +22,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Nguyen Ha | Claude Code | Check, debug, and push the Issue #1 work: EDA, TF-IDF material models, rating models, model notes, and report drafts. | `analysis/`, `docs/model-notes/`, `report/`, `results/` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Re-export the pipeline diagram as a clean image without the editor toolbar. | `report/assets/project-pipeline.png` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Rewrite the report sections to be shorter and easier to read, with tables and supporting formulas. | `report/sections/` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Restructure the report to the rubric with full paragraph counts, tables, formulas, and figures, and fix the text-cleaning bug that erased titles. | `report/sections/`, `analysis/load_data.py`, `docs/model-notes/` |

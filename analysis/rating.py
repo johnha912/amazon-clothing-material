@@ -151,6 +151,7 @@ fig = px.scatter(resid, x="predicted", y="residual", opacity=0.35,
                  title="XGBoost rating residuals (test split)")
 fig.add_hline(y=0)
 fig.write_html(RESULTS_DIR / "rating_residual_plot.html", include_plotlyjs="cdn")
+fig.write_image(RESULTS_DIR / "rating_residual_plot.png", width=1000, height=600, scale=2)
 
 print("\nworst material groups by RMSE:")
 print(by_material.head(6).to_string())

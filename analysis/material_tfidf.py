@@ -130,6 +130,7 @@ fig = px.imshow(confusion_matrix(test.material, best, labels=class_names),
                 labels={"x": "predicted", "y": "true", "color": "count"},
                 title="TF-IDF + logistic regression — confusion matrix (test)")
 fig.write_html(RESULTS_DIR / "material_tfidf_confusion.html", include_plotlyjs="cdn")
+fig.write_image(RESULTS_DIR / "material_tfidf_confusion.png", width=900, height=750, scale=2)
 
 errors = (test
           .assign(predicted=best)

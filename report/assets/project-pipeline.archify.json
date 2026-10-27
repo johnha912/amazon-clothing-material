@@ -23,7 +23,7 @@
    "items": [
     "Train on split == 'train', report on split == 'test', random_state=42 everywhere",
     "Every published number carries its command, seed, and data version so three authors' results can be merged and re-checked",
-    "Pilot (10k): TF-IDF LogReg macro-F1 0.360, SVM 0.357; XGBoost rating RMSE 0.578 vs 0.586 mean baseline"
+    "Pilot (10k): TF-IDF LogReg macro-F1 0.557, SVM 0.524; XGBoost rating RMSE 0.578 vs 0.586 mean baseline"
    ],
    "title": "Evaluation discipline"
   }
