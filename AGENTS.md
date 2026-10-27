@@ -8,7 +8,7 @@ Predict a clothing product's dominant material (Task A: classification, macro-F1
 
 ## Status
 
-- Pilot (first 10k records): TF-IDF baseline macro-F1 ≈ 0.28.
+- Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239 (903 test rows, 9 classes; `results/material_tfidf.csv`, `docs/model-notes/material_tfidf.md`).
 - Sample milestones: 50k products by Wed Oct 28, ~250k products by Sun Nov 1.
 - Report and presentation due Sun Dec 6; presentations streamed Thu Dec 17.
 - Open question: do shoes stay in scope? (sole vs. upper makes their labels noisy). Yanglin and Nguyen decide.

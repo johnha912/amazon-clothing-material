@@ -23,3 +23,6 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Nguyen Ha | Claude Code | Re-export the pipeline diagram as a clean image without the editor toolbar. | `report/assets/project-pipeline.png` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Rewrite the report sections to be shorter and easier to read, with tables and supporting formulas. | `report/sections/` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Restructure the report to the rubric with full paragraph counts, tables, formulas, and figures, and fix the text-cleaning bug that erased titles. | `report/sections/`, `analysis/load_data.py`, `docs/model-notes/` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Update the AGENTS.md Status section with the current pilot macro-F1 (0.5572). | `AGENTS.md` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Write the Related Implementations section from three Kaggle notebooks on Amazon Reviews 2023. | `report/sections/related_implementations.md` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Commit and push the Status update and the Related Implementations section. | Git |
