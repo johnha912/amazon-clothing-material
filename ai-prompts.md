@@ -20,3 +20,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Nguyen Ha | Claude Code | Move the Kaggle related-implementations work from Rui Song to Nguyen Ha. | `AGENTS.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Add the missing Modeling role with Yanglin Hu as lead to AGENTS.md. | `AGENTS.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Check, debug, and push the Issue #1 work: EDA, TF-IDF material models, rating models, model notes, and report drafts. | `analysis/`, `docs/model-notes/`, `report/`, `results/` |
+| 2026-10-27 | Nguyen Ha | Claude Code | Re-export the pipeline diagram as a clean image without the editor toolbar. | `report/assets/project-pipeline.png` |
