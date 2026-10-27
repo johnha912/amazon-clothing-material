@@ -1,7 +1,13 @@
 # Discussion and limitations
 
-Three limitations bound what these results can claim. First, the label itself is a proxy: the dominant fiber by percentage is well defined for a "90% Polyester, 10% Spandex" shirt, but it is a weaker notion for blended garments where a minority fiber drives the feel, and it is actively misleading for shoes, whose composition strings often describe the sole. The team's open decision on whether shoes stay in scope should be settled before the final sample is frozen, because it changes both the class distribution and the meaning of the leather and rubber classes. Second, only 46% of listings carry a composition string at all, and labeled listings are unlikely to be a random subset — brands that publish compositions may write systematically different copy — so Task A performance on labeled data may not transfer to the unlabeled majority the model would be applied to. Third, the Task B result cuts both ways: it is evidence that material and price carry little rating signal, but average rating is itself a coarse target that mixes product quality with sizing, expectations, and delivery, so a null result here does not prove buyers do not care about material.
+Three limitations bound what these results can claim.
 
-Ethically, the Task A model is best read as a search and accessibility aid — recovering a filterable field that sellers already disclose in prose — rather than as a way to assert materials a seller never stated. Predictions on unlabeled listings should be presented with their confidence and never written back as if they were seller-provided facts, particularly for regulated claims such as leather or wool content.
+| Limitation | Why it matters | Response |
+|---|---|---|
+| The label is a proxy | "Dominant fiber" is clear for a 90/10 shirt, weaker for blends where a minor fiber drives the feel, and misleading for shoes whose string describes the sole | Decide whether shoes stay in scope before the final sample is frozen |
+| Labeled listings are not a random subset | Only 46% carry a composition string, and brands that publish one may write different copy | Task A scores may not transfer to the unlabeled majority; check the gap on the full sample |
+| Average rating is a coarse target | It mixes product quality with sizing, expectations, and delivery | The weak Task B result shows that listings carry little rating signal, not that buyers ignore material |
 
-The natural next steps are the ones the team's plan already schedules: rerun every model on the 250,000-product sample with the merged class list from `src/labels.py`, complete the DistilBERT comparison, and add a calibration or confidence display to the demo app so that its predictions communicate the same uncertainty this discussion describes.
+The Task A model is best used as a search and accessibility aid: it recovers a field sellers already state in prose. Its predictions should be shown with their confidence and never stored as seller-provided facts, especially for regulated claims such as leather or wool content.
+
+Next, we will rerun every model on the 250,000-product sample with the merged class list from `src/labels.py`, complete the DistilBERT comparison, and add a confidence display to the demo app so that its predictions show the same uncertainty described here.

@@ -6,7 +6,7 @@ _Owner: Nguyen Ha · Role: Modeling · Script: `analysis/material_tfidf.py` · S
 
 Both models read the same input: the listing text (`title` + features + description, with the composition strings removed so the answer never appears in the input). A TF-IDF vectorizer turns each listing into a long sparse vector, one entry per word or two-word phrase (unigrams + bigrams, at most 60,000 of them, words appearing in fewer than 2 listings dropped). Each entry is the term's TF-IDF weight,
 
-$$\text{tfidf}(t, d) = \text{tf}(t, d) \cdot \log \frac{N}{1 + \text{df}(t)},$$
+$$\text{tfidf}(t, d) = \text{tf}(t, d) \cdot \left(\log \frac{1 + N}{1 + \text{df}(t)} + 1\right),$$
 
 with sublinear term frequency ($\text{tf}$ replaced by $1 + \log \text{tf}$), so a word repeated ten times in one listing counts for more than a word said once, but not ten times more. The inverse-document-frequency factor downweights words that appear in almost every listing ("size", "color") and upweights words that appear in few ("linen", "suede"), which are exactly the words that carry material information.
 
@@ -14,7 +14,7 @@ On top of that vector, the two classifiers differ only in how they draw the boun
 
 $$P(y = k \mid x) = \frac{e^{w_k \cdot x}}{\sum_j e^{w_j \cdot x}},$$
 
-trained by minimizing cross-entropy loss plus an L2 penalty ($C = 1.0$). The linear SVM instead learns a separating hyperplane per pair of sides and predicts the class with the largest decision value $w \cdot x + b$, trained with hinge loss, $\max(0, 1 - y\,(w \cdot x + b))$, again with $C = 1.0$. Both use `class_weight="balanced"`, so rare materials count more per row than common ones during training.
+trained by minimizing cross-entropy loss plus an L2 penalty ($C = 1.0$). The linear SVM instead learns one separating hyperplane per class (one-vs-rest) and predicts the class with the largest decision value $w \cdot x + b$, trained with the squared hinge loss, $\max(0, 1 - y\,(w \cdot x + b))^2$, again with $C = 1.0$. Both use `class_weight="balanced"`, so rare materials count more per row than common ones during training.
 
 ## Why this suits the dataset
 

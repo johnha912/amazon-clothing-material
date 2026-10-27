@@ -2,8 +2,37 @@
 
 ![Project pipeline: from raw metadata to the sample, the three model tracks, and the merged outputs.](../assets/project-pipeline.png)
 
-We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.), which covers about 7.2 million products. Each record provides a title, feature bullets, a description, a price, a department derived from the category hierarchy, the product's average rating, and the number of ratings it received. Because the full category is several gigabytes, the team works on a fixed-seed sample drawn by hashing the product identifier; the pilot experiments in this report use the first 10,000 metadata records, and the same scripts rerun unchanged on the 50,000- and 250,000-product samples.
+We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.), about 7.2 million products. Each record has a title, feature bullets, a description, a price, a department, the average rating, and the number of ratings. The pilot results below use the first 10,000 records; the same scripts rerun unchanged on the 50,000- and 250,000-product samples drawn by hashing the product identifier.
 
-Labels for Task A come from a single shared rule: a listing is labeled with the highest-percentage known fiber in a composition string found in its structured details or feature bullets, with ties broken in favor of the fiber listed first, and no label is ever inferred for a listing that has no composition string. In the pilot data, 46.0% of listings carry such a string and receive a label; the remaining 54.0% are excluded from Task A rather than guessed at. The labeled products are dominated by polyester (1,583 listings) and cotton (1,416), followed by leather (618), nylon (341), and rayon (336), a long-tailed distribution that motivates reporting macro-F1, which weights every class equally, instead of accuracy alone. One known label-quality problem is footwear: a shoe's composition string often describes the sole rather than the upper, so rubber and leather labels for shoes mix two different notions of "material"; whether shoes stay in scope is an open team decision.
+## Labels
 
-Exploratory analysis (script `analysis/eda.py`, charts in `results/eda/`) shows three patterns that shape the modeling. First, prices are missing for 45.7% of pilot listings, and the missingness is not random: it varies by department, while average ratings differ only slightly between priced and unpriced products, so we keep a missing-price indicator as a feature instead of dropping those rows. Second, average ratings are compressed into a narrow band (pilot mean 4.20 on a five-point scale) and differ modestly across materials, departments, and price bands, which foreshadows the difficulty of Task B. Third, price itself is heavily right-skewed, so models receive its logarithm rather than the raw value.
+A listing's label is the known fiber with the highest percentage in its composition string, taken from the structured details or the feature bullets:
+
+$$m^* = \arg\max_{m \in \mathcal{M}} p_m,$$
+
+where $p_m$ is the stated percentage of fiber $m$ and ties go to the fiber listed first. A listing with no composition string gets no label and is left out of Task A; we never guess one. In the pilot, 4,602 of 10,000 listings (46.0%) receive a label.
+
+| Material | Labeled listings | Share |
+|---|---|---|
+| Polyester | 1,583 | 34.4% |
+| Cotton | 1,416 | 30.8% |
+| Leather | 618 | 13.4% |
+| Nylon | 341 | 7.4% |
+| Rayon | 336 | 7.3% |
+| Other (spandex, acrylic, wool, ...) | 308 | 6.7% |
+
+This long tail is why Task A reports macro-F1, which gives every class the same weight regardless of its size:
+
+$$\text{F1}_{\text{macro}} = \frac{1}{K}\sum_{k=1}^{K} \frac{2\,P_k R_k}{P_k + R_k},$$
+
+where $P_k$ and $R_k$ are the precision and recall of class $k$. Accuracy alone would reward a model that only learns polyester and cotton.
+
+## What the exploration shows
+
+The exploratory analysis (`analysis/eda.py`, charts in `results/eda/`) found three patterns, each of which changed a modeling decision.
+
+| Finding | Evidence (pilot) | Decision |
+|---|---|---|
+| Prices are often missing, and not at random | 45.7% of listings have no price; among departments with at least 100 listings the share ranges from 34% (Sport Specific Clothing) to 77% (Westlake). Unpriced products average 4.10 stars against 4.27 for priced ones. | Keep every row and add a has-price indicator, since missingness itself carries signal |
+| Ratings are compressed near the top | Mean 4.20, standard deviation 0.57; 92% of products sit between 3.5 and 5. Mean rating by material spans only 4.16 (spandex) to 4.35 (acrylic). | Expect a weak Task B signal and judge every model against a mean baseline |
+| Price is heavily right-skewed | Median $26, mean $39, skewness 18.0 | Use $\log(1 + \text{price})$, which cuts the skewness to 0.76 |

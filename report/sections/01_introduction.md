@@ -1,7 +1,16 @@
 # Introduction
 
-Clothing material shapes how a garment feels, how long it lasts, and how satisfied a buyer is with it, yet on Amazon the material of a product is rarely a structured, searchable field. It is buried in free-text feature bullets, most often as a composition string such as "90% Polyester, 10% Spandex", and a shopper who wants, for example, only cotton shirts has no reliable filter. This project asks whether that missing field can be recovered automatically, and whether the recovered field is worth anything once it exists.
+Material decides how a garment feels, how long it lasts, and whether the buyer is satisfied, yet Amazon rarely stores it as a searchable field. It sits in free-text feature bullets as a composition string such as "90% Polyester, 10% Spandex", so a shopper who wants only cotton shirts has no reliable filter.
 
-We study two questions on the Clothing, Shoes and Jewelry category of the Amazon Reviews 2023 dataset. In Task A, we predict a product's dominant material — the highest-percentage fiber in its composition string — from the rest of its listing text, with the composition strings themselves removed so that the task is genuine inference rather than lookup. In Task B, we predict a product's average rating from listing fields alone (price, department, and text lengths) together with the material label, without using any information derived from the product's own ratings or reviews beyond the target itself.
+We ask two linked questions on the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). Task A asks whether the missing field can be recovered from the listing text. Task B asks whether the recovered field is worth anything, that is, whether material helps predict how buyers rate a product.
 
-The two tasks are deliberately paired. Task A tests whether material is recoverable at all; Task B tests whether material, once known, carries signal about buyer satisfaction. Our baselines are classical and reproducible: TF-IDF features with logistic regression and a linear SVM for Task A, compared against a fine-tuned DistilBERT model, and a mean predictor, a random forest, and XGBoost for Task B. All experiments use a fixed seed and a shared train/test split, and every reported number records the command, seed, and data version that produced it.
+| | Task A: material | Task B: rating |
+|---|---|---|
+| Target | Dominant fiber (highest percentage in the composition string) | Average rating, 1 to 5 |
+| Input | Title, bullets, and description, with every composition string removed | Listing fields (price, department, text length) plus the material label |
+| Models | TF-IDF + logistic regression, TF-IDF + linear SVM, fine-tuned DistilBERT | Mean baseline, random forest, XGBoost |
+| Metric | Macro-F1 | RMSE and MAE |
+
+The dataset poses three challenges. Only 46% of listings carry a composition string, so most products have no label. The labels are imbalanced, with polyester and cotton making up 65% of labeled listings. Footwear composition strings often describe the sole rather than the upper, so the same label can mean different things.
+
+All experiments share one train/test split and one seed (42), and every reported number records the command, seed, and data version that produced it.
