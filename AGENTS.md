@@ -111,6 +111,8 @@ Full guide with an example: `docs/code-style.md`. Hard rules:
 - Write analysis code as `.py` files with `# %%` cells; no `.ipynb` files.
 - Make charts with Plotly.
 - Write report text in `report/` as paragraphs, not bullet lists. The grading rubric takes points off for lists.
+- Before every push, audit your own diff with your AI tool in a fresh session: the leakage rules, every new number traced to its command, seed, and data version, every new URL opened by a human or a tool that can actually fetch it, and no bullet lists in `report/`.
+- Fix what the audit finds and rerun it until it passes, then end the commit message with `Audit: PASS (<tool>)`. Each member uses a different AI tool, so teammates' tools check the work again when they pull. This does not replace the feature pipeline's Auditor.
 
 ## Prompt log
 
