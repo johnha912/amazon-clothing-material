@@ -26,3 +26,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Nguyen Ha | Claude Code | Update the AGENTS.md Status section with the current pilot macro-F1 (0.5572). | `AGENTS.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Write the Related Implementations section from three Kaggle notebooks on Amazon Reviews 2023. | `report/sections/related_implementations.md` |
 | 2026-10-27 | Nguyen Ha | Claude Code | Commit and push the Status update and the Related Implementations section. | Git |
+| 2026-10-29 | Nguyen Ha | Claude Code | Pull the latest repo and rewrite the README with the task overview, pilot results, setup, layout, roadmap, and team. | `README.md` |
