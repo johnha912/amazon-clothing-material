@@ -41,3 +41,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Merge the per-section reference lists into one shared list. | `report/sections/11_references.md`, `05_methods.md`, `08_analysis.md`, `related_work.md` |
 | 2026-11-08 | Claude Code | Fill in the year for the three Kaggle notebooks in the reference list. | `report/sections/11_references.md` |
 | 2026-11-08 | Claude Code | Are meeting notes required? If not, delete them and push. | `report/meeting-notes.md`, `README.md` |
+| 2026-11-08 | Claude Code | Update the README. | `README.md` |

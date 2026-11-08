@@ -171,9 +171,10 @@ The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_d
 │   └── rating.py            # Task B: mean baseline, random forest, XGBoost
 ├── docs/
 │   ├── code-style.md
+│   ├── method-analysis-sources.md  # the five Method/Analysis papers and how we use them
 │   └── model-notes/         # one note per model family: method, rationale, error analysis
 ├── app/                     # Streamlit demo
-├── report/                  # report sections, pipeline figure
+├── report/                  # report sections (one shared reference list), pipeline figure
 ├── results/                 # metric CSVs, EDA charts, confusion matrix, error examples
 ├── src/                     # sample builder, label module and tests, shared evaluation
 └── data/, models/           # local only — never committed
@@ -187,6 +188,7 @@ The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbe
 - ✅ Sample builder: ~250k-listing `data/sample.parquet` (249,762 rows, 36.4% labeled)
 - ✅ DistilBERT pilot fine-tune for Task A; first Streamlit demo in `app/`
 - ✅ Week 1 closed ([Issue #1](https://github.com/johnha912/amazon-clothing-material/issues/1)): same test rows confirmed for all three Task A models, shoe scope decided, Related Work and Related Implementations drafted
+- ✅ Five more papers cited in the Method and Analysis drafts; all report references merged into one list
 - 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): rerun all models on the 250k sample through `src/evaluate.py`, with 95% confidence intervals
 - 📝 Report (PDF, max 8 pages) and a 5 ± 1 minute recorded presentation with a live demo, both due **December 6, 2026, 11:55 PM EST**
 
@@ -204,13 +206,17 @@ The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbe
 
 We also compare our approach with three public Kaggle notebooks on the same dataset family (star-rating prediction, metadata-based recommendation, and EDA) in [`report/sections/related_implementations.md`](report/sections/related_implementations.md), including what each one does and where we try to do better.
 
-Five more papers that support the Method and Analysis sections (TF-IDF vs. DistilBERT, NB vs. SVM baselines, class imbalance, the Rakuten product-title challenge, and fastText) are listed with verified citations in [`docs/method-analysis-sources.md`](docs/method-analysis-sources.md).
+Five more papers, found by Rui Song, are cited in the [Method](report/sections/05_methods.md) and [Analysis](report/sections/08_analysis.md) sections: a comparison of bag-of-words models with DistilBERT (Galke and Scherp), NB vs. SVM baselines and bigrams (Wang and Manning), class imbalance (Henning et al.), the Rakuten product-title challenge (Lin et al.), and fastText (Joulin et al.). [`docs/method-analysis-sources.md`](docs/method-analysis-sources.md) summarizes what each paper says and where we use it.
+
+Every work cited in the report, papers and notebooks alike, is collected in one list: [`report/sections/11_references.md`](report/sections/11_references.md).
 
 ## A note on AI assistance
 
 This project is developed with AI assistants under the rules in [AGENTS.md](AGENTS.md) — file ownership per member, cross-tool audits for feature work, and no metric entering the report unless it was produced on the untouched test split. Every assistant prompt is logged in [`ai-prompts.md`](ai-prompts.md), which feeds the "AI Prompts Used" section of the final report.
 
 ## References
+
+Works cited in this README are below; the report's full list is in [`report/sections/11_references.md`](report/sections/11_references.md).
 
 - Hou, Yupeng, et al. "Bridging Language and Items for Retrieval and Recommendation." *arXiv*, 2024. [arxiv.org/abs/2403.03952](https://arxiv.org/abs/2403.03952) — the Amazon Reviews 2023 dataset paper.
 - Chen, Tianqi, and Carlos Guestrin. "XGBoost: A Scalable Tree Boosting System." *Proceedings of the 22nd ACM SIGKDD*, ACM, 2016, pp. 785–94.
