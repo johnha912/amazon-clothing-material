@@ -21,6 +21,8 @@ are never used as features.
 """
 
 # %% Imports and config
+import hashlib
+import json
 from pathlib import Path
 
 import joblib
@@ -63,6 +65,15 @@ print(f"Task A rows: train={len(train):,}, test={len(test):,}, "
       f"classes={task_a.material.nunique()}")
 print(train.material.value_counts().to_string())
 
+# Same digest as fingerprint(test, ["parent_asin"]) in analysis/material_bert.py,
+# so results/ can prove both runs scored the same test rows.
+test_ids = (test.loc[:, ["parent_asin"]].sort_values("parent_asin")
+            .to_dict(orient="records"))
+TEST_IDS_SHA256 = hashlib.sha256(json.dumps(
+    test_ids, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+).encode("utf-8")).hexdigest()
+print(f"test_ids_sha256={TEST_IDS_SHA256}")
+
 # %% Train both TF-IDF models (identical features, only the classifier differs)
 
 def make_tfidf() -> TfidfVectorizer:
@@ -94,7 +105,8 @@ for name, model in models.items():
                  "n_train": len(train), "n_test": len(test),
                  "n_classes": int(task_a.material.nunique()),
                  "command": "python analysis/material_tfidf.py",
-                 "seed": SEED, "data_version": DATA_VERSION})
+                 "seed": SEED, "data_version": DATA_VERSION,
+                 "test_ids_sha256": TEST_IDS_SHA256})
     print(f"\n{name}: macro-F1={rows[-1]['macro_f1']}, accuracy={rows[-1]['accuracy']}")
     if name == "tfidf_logreg":
         print(classification_report(test.material, pred, digits=3))

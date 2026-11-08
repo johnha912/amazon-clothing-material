@@ -216,6 +216,10 @@ def write_comparison(results_dir):
         if table.task_fingerprint.nunique() != 1:
             raise ValueError("Task fingerprints differ; the listing text/labels/IDs/split changed.")
         verification = "exact_task_fingerprint_match"
+    elif "test_ids_sha256" in table and table.test_ids_sha256.notna().all():
+        if table.test_ids_sha256.nunique() != 1:
+            raise ValueError("Test-ID hashes differ; the models were scored on different test rows.")
+        verification = "test_ids_sha256_match (same test parent_asins; text/labels not hashed for tfidf)"
     table = (
         table
         .assign(comparison_verification=verification)
