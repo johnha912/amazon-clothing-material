@@ -8,8 +8,8 @@ Predict a clothing product's dominant material (Task A: classification, macro-F1
 
 ## Status
 
-- Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239 (903 test rows, 9 classes; `results/material_tfidf.csv`, `docs/model-notes/material_tfidf.md`).
-- Sample milestones: 50k products by Wed Oct 28, ~250k products by Sun Nov 1.
+- Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239, DistilBERT 0.3563 (same 903 test rows, 9 classes; `results/material_comparison.csv`, `docs/model-notes/`). DistilBERT has no independent audit yet.
+- Sample delivered: `data/sample.parquet` 249,762 rows, `src/make_sample.py` commit 2219c1e, seed 42 (36.4% labeled). No model has been rerun on it yet.
 - Report and presentation due Sun Dec 6; presentations streamed Thu Dec 17.
 - Open question: do shoes stay in scope? (sole vs. upper makes their labels noisy). Yanglin and Nguyen decide.
 
@@ -37,7 +37,7 @@ Edit only the files you own, and run `git pull` before you start. `ai-prompts.md
 
 - The labeling rule lives in one place: `dominant()`, now in `explore_sample.py` and moving to `src/labels.py`. Don't re-implement it. Change it only there, together with its tests.
 - A label is the highest-percentage known fiber in a composition string such as "90% Polyester, 10% Spandex". On a tie, the first fiber listed wins. Rare fibers are merged into the class list defined in `src/labels.py`.
-- Only about 46% of listings have a composition string, so only about 46% get a label. This is expected. Rows without one have `material = NaN` and are dropped for Task A. Never fill in, guess, or model labels for the rest.
+- Only about 36% of listings in the 250k sample have a composition string (46% in the first-10k pilot), so only those get a label. This is expected. Rows without one have `material = NaN` and are dropped for Task A. Never fill in, guess, or model labels for the rest.
 
 ## Leakage
 
@@ -59,7 +59,7 @@ One session = one role. State the role in your first message (for example "Role:
 
 | Role | Human | Owns | Produces | Rubric points (Report · Presentation) |
 |---|---|---|---|---|
-| PM | Nguyen Ha | Status section above, completeness of `ai-prompts.md` | Weekly status, merged results table, Statement of Contributions (from `git log` and the prompt log) | Completion 10, Conclusion 4 · Finished on Time 10 |
+| PM | Nguyen Ha | Status section above, completeness of `ai-prompts.md` | Weekly status, merged results table, Statement of Contributions (from `git log`) | Completion 10, Conclusion 4 · Finished on Time 10 |
 | Data Pipeline | Rui Song | `src/`: `make_sample.py`, `labels.py` and its tests, `evaluate.py` | `data/sample.parquet` at each milestone, the shared evaluation every cited number comes from | Experimental Setup 8 · Data Processing 15 |
 | Literature | Rui Song | `report/sections/related_work.md` | 5–6 published papers on this dataset, each with a URL | Related Work 11, References 4 · Related Work 5 |
 | Implementations | Nguyen Ha | `report/sections/related_implementations.md` | 2–3 Kaggle notebooks on this dataset, each with a URL, what it did, and why our method is better | Related Implementations 11 |
@@ -119,8 +119,8 @@ Full guide with an example: `docs/code-style.md`. Hard rules:
 The report must include an "AI Prompts Used" section that lists every prompt. This log is where that section comes from.
 
 - After every prompt you receive in this repo, append one row to the end of the table in `ai-prompts.md`:
-  `| YYYY-MM-DD | <member name> | <tool> | <the prompt as one short English sentence> | <file or task it was for> |`
-  Use the member's name as written in the README Authors table.
+  `| YYYY-MM-DD | <tool> | <the prompt as one short English sentence> | <file or task it was for> |`
+  Don't record who sent the prompt; the log has no member column.
 - Commit the log together with your next work commit, or once at the end of the session. Don't make a separate commit and push for each prompt.
 - Keep the summary short and neutral; never include secrets, API keys, or raw data.
 - If your tool can't edit files (for example, a chat in the browser), the member adds the row by hand.

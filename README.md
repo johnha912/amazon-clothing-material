@@ -19,7 +19,7 @@ Clothing material drives comfort, durability, and how a product ages, yet on Ama
 
 ## Dataset
 
-We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**; a reproducible sample builder (50k, then ~250k records) is in progress. Raw data is never committed — the `data/` folder is gitignored.
+We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**; the reproducible ~250k-record sample (`src/make_sample.py`, 249,762 rows) is built and the models will be rerun on it. On that sample only 36.4% of listings are labeled and 79.8% lack a price, so the pilot shares below are not representative. Raw data is never committed — the `data/` folder is gitignored.
 
 Labels are not given; we extract them. A label is the highest-percentage fiber in a composition string such as "90% Polyester, 10% Spandex" (ties go to the first fiber listed). Only listings that carry such a string can be labeled:
 
@@ -47,7 +47,7 @@ Among labeled listings, polyester (~34%) and cotton (~31%) dominate, followed by
 |---|---|---|
 | A | TF-IDF + logistic regression | ✅ Pilot results below |
 | A | TF-IDF + linear SVM | ✅ Pilot results below |
-| A | DistilBERT fine-tune (GPU) | 🚧 In progress |
+| A | DistilBERT fine-tune (GPU) | ✅ Pilot results below |
 | B | Mean baseline | ✅ Pilot results below |
 | B | Random forest | ✅ Pilot results below |
 | B | XGBoost | ✅ Pilot results below |
@@ -62,8 +62,9 @@ Each model family with results (TF-IDF material models, rating models) has a not
 |---|---|---|
 | TF-IDF + logistic regression | **0.5572** | 0.6766 |
 | TF-IDF + linear SVM | 0.5239 | **0.7364** |
+| DistilBERT (fine-tuned, Colab T4) | 0.3563 | 0.6899 |
 
-Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
+Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. DistilBERT matches the TF-IDF models on the large classes but never predicts the three rarest fibers (it was trained without class weights), which costs it most of its macro-F1. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
 
 ### Task B — Rating prediction
 
@@ -95,7 +96,7 @@ python analysis/material_tfidf.py               # Task A baselines -> results/ma
 python analysis/rating.py                       # Task B models -> results/rating.csv
 ```
 
-The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_data.py)). When `data/sample.parquet` exists (built by `src/make_sample.py`, in progress) they use it automatically; until then they fall back to the 10k pilot above, with the same schema, labeling rule, and split.
+The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_data.py)). When `data/sample.parquet` exists (built by `src/make_sample.py`) they use it automatically; until then they fall back to the 10k pilot above, with the same schema, labeling rule, and split.
 
 ## Repository layout
 
@@ -108,22 +109,26 @@ The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_d
 │   ├── load_data.py         # shared loader (sample.parquet preferred, pilot fallback)
 │   ├── eda.py               # exploratory analysis + Plotly charts
 │   ├── material_tfidf.py    # Task A: TF-IDF + logistic regression / linear SVM
+│   ├── material_bert.py     # Task A: DistilBERT fine-tune (Colab GPU)
 │   └── rating.py            # Task B: mean baseline, random forest, XGBoost
 ├── docs/
 │   ├── code-style.md
 │   └── model-notes/         # one note per model family: method, rationale, error analysis
+├── app/                     # Streamlit demo
 ├── report/                  # report sections, meeting notes, pipeline figure
 ├── results/                 # metric CSVs, EDA charts, confusion matrix, error examples
+├── src/                     # sample builder, label module and tests, shared evaluation
 └── data/, models/           # local only — never committed
 ```
 
-In progress and not yet in the tree: `src/` (sample builder, label module, shared evaluation), `analysis/material_bert.py` (DistilBERT), and `app/` (Streamlit demo).
+The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbert-2026-11-02` release](https://github.com/johnha912/amazon-clothing-material/releases/tag/yanglin-distilbert-2026-11-02), not committed.
 
 ## Status and roadmap
 
 - ✅ Proposal submitted; pilot EDA and both baseline families run on 10,000 listings
-- 🚧 Scale the sample to 50k, then ~250k listings, and re-run all models on the frozen sample
-- 🚧 DistilBERT fine-tune for Task A; Streamlit demo for the presentation
+- ✅ Sample builder: ~250k-listing `data/sample.parquet` (249,762 rows, 36.4% labeled)
+- ✅ DistilBERT pilot fine-tune for Task A; first Streamlit demo in `app/`
+- 🚧 Re-run all models on the 250k sample
 - 📝 Report (max 8 pages) and a 5-minute recorded presentation due **December 6, 2026**
 
 ## Team
