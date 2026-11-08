@@ -204,6 +204,8 @@ The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbe
 
 We also compare our approach with three public Kaggle notebooks on the same dataset family (star-rating prediction, metadata-based recommendation, and EDA) in [`report/sections/related_implementations.md`](report/sections/related_implementations.md), including what each one does and where we try to do better.
 
+Five more papers that support the Method and Analysis sections (TF-IDF vs. DistilBERT, NB vs. SVM baselines, class imbalance, the Rakuten product-title challenge, and fastText) are listed with verified citations in [`docs/method-analysis-sources.md`](docs/method-analysis-sources.md).
+
 ## A note on AI assistance
 
 This project is developed with AI assistants under the rules in [AGENTS.md](AGENTS.md) — file ownership per member, cross-tool audits for feature work, and no metric entering the report unless it was produced on the untouched test split. Every assistant prompt is logged in [`ai-prompts.md`](ai-prompts.md), which feeds the "AI Prompts Used" section of the final report.
