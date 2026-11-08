@@ -38,3 +38,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Check the README and rewrite it where needed. | `README.md` |
 | 2026-11-08 | Claude Code | Add the five papers Rui found for the Method and Analysis sections to the repo; the project can draw on them too. | `docs/method-analysis-sources.md`, `README.md` |
 | 2026-11-08 | Claude Code | Work these sources into the Method and Analysis sections. | `report/sections/05_methods.md`, `report/sections/08_analysis.md` |
+| 2026-11-08 | Claude Code | Merge the per-section reference lists into one shared list. | `report/sections/11_references.md`, `05_methods.md`, `08_analysis.md`, `related_work.md` |
