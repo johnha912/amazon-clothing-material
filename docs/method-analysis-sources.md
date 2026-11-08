@@ -1,6 +1,6 @@
 # Sources for the Method and Analysis sections
 
-Five papers Rui Song found on 2026-11-08 that fit the Method and Analysis sections better than Related Work. Each entry below was opened at its URL on 2026-11-08; the "What it says" lines come from the paper's abstract or first page, not from memory. None of them is cited in the report yet.
+Five papers Rui Song found on 2026-11-08 that fit the Method and Analysis sections better than Related Work. Each entry below was opened at its URL on 2026-11-08; the "What it says" lines come from the paper's abstract or first page, not from memory. All five are cited in `report/sections/05_methods.md` and `report/sections/08_analysis.md`.
 
 | # | Paper | What it says | Where it can help us |
 |---|---|---|---|
