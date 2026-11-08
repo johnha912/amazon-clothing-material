@@ -72,7 +72,7 @@ Solid arrows are steps already run, and the current pilot numbers come from `dat
 
 ## Dataset
 
-We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**; the reproducible ~250k-record sample (`python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000`, 249,762 rows, run by Rui Song, reported in Issue #1) is built and the models will be rerun on it. On that sample only 36.4% of listings are labeled and 79.8% lack a price, so the pilot shares below are not representative. Raw data is never committed — the `data/` folder is gitignored.
+We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**. The reproducible ~250k-record sample (`python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000`, seed 42, `src/make_sample.py` commit 2219c1e) has been built twice with identical results (Rui Song, and an independent rebuild, both in Issue #1): 249,762 rows, 199,838 train / 49,924 test. On that sample only 36.4% of listings are labeled and 79.8% lack a price, so the pilot shares below are not representative; the models are rerun on it in Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)). Raw data is never committed — the `data/` folder is gitignored.
 
 Labels are not given; we extract them. A label is the highest-percentage fiber in a composition string such as "90% Polyester, 10% Spandex" (ties go to the first fiber listed). Only listings that carry such a string can be labeled:
 
@@ -83,7 +83,7 @@ Labels are not given; we extract them. A label is the highest-percentage fiber i
 | Listings that name a known material anywhere | 79.0% |
 | Listings with a missing price | 45.7% |
 
-Among labeled listings, polyester (~34%) and cotton (~31%) dominate, followed by leather (~13%). Classes with fewer than 20 labeled rows are dropped for the pilot, leaving 9 classes (3,641 train / 903 test). Task B uses all 10,000 listings (8,046 train / 1,954 test).
+Among labeled listings, polyester (~34%) and cotton (~31%) dominate, followed by leather (~13%). Classes with fewer than 20 labeled rows are dropped for the pilot, leaving 9 classes (3,641 train / 903 test). Task B uses all 10,000 listings (8,046 train / 1,954 test). On the 250k sample the 90,979 labeled listings fall into 10 classes (cotton 33.0%, polyester 31.3%, leather 17.3%, then nylon, rayon, other, spandex, wool, rubber, and metal), so pilot and 250k scores are not directly comparable. Shoes stay in scope: dropping the 113 shoe rows from the pilot test set changes macro-F1 by -0.017 to -0.019 for the three models, and every bootstrap 95% confidence interval of that change includes 0, but 105 of the 115 leather test rows are shoes, so the leather class mostly measures footwear.
 
 ## Approach
 
@@ -117,7 +117,7 @@ Each model family with results (TF-IDF material models, DistilBERT, rating model
 | TF-IDF + linear SVM | 0.5239 | **0.7364** |
 | DistilBERT (fine-tuned, Colab T4) | 0.3563 | 0.6899 |
 
-Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. DistilBERT matches or beats logistic regression on cotton, polyester, leather, and nylon but never predicts the three rarest fibers (it was trained without class weights), which accounts for most of its macro-F1 gap; rayon (F1 0.07) and acrylic account for the rest. The DistilBERT row is provisional until its independent audit. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
+Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. DistilBERT matches or beats logistic regression on cotton, polyester, leather, and nylon but gets none of the three rarest fibers right (polyurethane, spandex, and wool, F1 0), which accounts for about 60% of its macro-F1 gap; rayon (F1 0.07) and acrylic account for the rest. One untested explanation is that DistilBERT was fine-tuned without class weights while the TF-IDF models use balanced weights. All three models were scored on the same 903 test rows (matching `test_ids_sha256` in [`results/material_comparison.csv`](results/material_comparison.csv)); these are single-seed pilot numbers without confidence intervals. The DistilBERT row is provisional until its independent audit. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
 
 ### Task B — Rating prediction
 
@@ -147,6 +147,11 @@ python explore_sample.py data/meta_head.jsonl   # label-coverage statistics
 python analysis/eda.py                          # EDA charts -> results/eda/
 python analysis/material_tfidf.py               # Task A baselines -> results/material_tfidf.csv
 python analysis/rating.py                       # Task B models -> results/rating.csv
+
+# Optional: the ~250k sample (downloads the full 18 GB category file;
+# building the sample then took about 3 minutes on an Intel Core 7 150U laptop)
+curl -L -C - -o data/meta_Clothing_Shoes_and_Jewelry.jsonl https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Clothing_Shoes_and_Jewelry.jsonl
+python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000   # -> data/sample.parquet
 ```
 
 The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_data.py)). When `data/sample.parquet` exists (built by `src/make_sample.py`) they use it automatically; until then they fall back to the 10k pilot above, with the same schema, labeling rule, and split.
@@ -181,8 +186,9 @@ The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbe
 - ✅ Proposal submitted; pilot EDA and both baseline families run on 10,000 listings
 - ✅ Sample builder: ~250k-listing `data/sample.parquet` (249,762 rows, 36.4% labeled)
 - ✅ DistilBERT pilot fine-tune for Task A; first Streamlit demo in `app/`
-- 🚧 Re-run all models on the 250k sample
-- 📝 Report (max 8 pages) and a 5-minute recorded presentation due **December 6, 2026**
+- ✅ Week 1 closed ([Issue #1](https://github.com/johnha912/amazon-clothing-material/issues/1)): same test rows confirmed for all three Task A models, shoe scope decided, Related Work and Related Implementations drafted
+- 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): rerun all models on the 250k sample through `src/evaluate.py`, with 95% confidence intervals
+- 📝 Report (PDF, max 8 pages) and a 5 ± 1 minute recorded presentation with a live demo, both due **December 6, 2026, 11:55 PM EST**
 
 ## Team
 
@@ -192,9 +198,11 @@ The DistilBERT weights and Colab notebook are attached to the [`yanglin-distilbe
 | Yanglin Hu | M.S. in Data Science | [@Elliothu-oss](https://github.com/Elliothu-oss) | DistilBERT modeling (lead) |
 | Rui Song | M.S. in Computer Science | [@ruisnow-e](https://github.com/ruisnow-e) | Data pipeline (`src/`), demo app, related work |
 
-## Related implementations
+## Related work and implementations
 
-We compare our approach with three public Kaggle notebooks on the same dataset family (star-rating prediction, metadata-based recommendation, and EDA) in [`report/sections/related_implementations.md`](report/sections/related_implementations.md), including what each one does and where we try to do better.
+[`report/sections/related_work.md`](report/sections/related_work.md) places the project among six published papers: the Amazon Reviews 2023 dataset paper, earlier Amazon rating-prediction work (HFT), product attribute extraction (OpenTag, MAVE), DistilBERT, and a comparison of TF-IDF linear SVMs with fine-tuned transformers.
+
+We also compare our approach with three public Kaggle notebooks on the same dataset family (star-rating prediction, metadata-based recommendation, and EDA) in [`report/sections/related_implementations.md`](report/sections/related_implementations.md), including what each one does and where we try to do better.
 
 ## A note on AI assistance
 

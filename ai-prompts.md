@@ -35,3 +35,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Commit and push the Related Work section and tick the finished Issue #1 items. | Git, Issue #1 |
 | 2026-11-08 | Claude Code | Draft the Week 2 plan (Nov 9–15) to post as a new issue once Issue #1 is closed. | Week 2 issue |
 | 2026-11-08 | Claude Code | Post the sample check, close Issue #1, and open the Week 2 issue. | Issues #1 and #2 |
+| 2026-11-08 | Claude Code | Check the README and rewrite it where needed. | `README.md` |
