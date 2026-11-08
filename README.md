@@ -173,7 +173,7 @@ The analysis scripts share one loader ([`analysis/load_data.py`](analysis/load_d
 │   ├── code-style.md
 │   └── model-notes/         # one note per model family: method, rationale, error analysis
 ├── app/                     # Streamlit demo
-├── report/                  # report sections, meeting notes, pipeline figure
+├── report/                  # report sections, pipeline figure
 ├── results/                 # metric CSVs, EDA charts, confusion matrix, error examples
 ├── src/                     # sample builder, label module and tests, shared evaluation
 └── data/, models/           # local only — never committed
