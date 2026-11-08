@@ -32,3 +32,6 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Replace the HTML and PNG project pipeline with a Mermaid diagram. | `report/assets/project-pipeline.mmd`, `README.md`, `report/sections/04_data_analysis.md` |
 | 2026-11-08 | Claude Code | Use Yanglin's release zip as the DistilBERT source of record. | `analysis/material_bert.py`, `results/` |
 | 2026-11-08 | Claude Code | Check everything still missing in Issue #1 and finish it. | Issue #1, `report/sections/related_work.md` |
+| 2026-11-08 | Claude Code | Commit and push the Related Work section and tick the finished Issue #1 items. | Git, Issue #1 |
+| 2026-11-08 | Claude Code | Draft the Week 2 plan (Nov 9–15) to post as a new issue once Issue #1 is closed. | Week 2 issue |
+| 2026-11-08 | Claude Code | Post the sample check, close Issue #1, and open the Week 2 issue. | Issues #1 and #2 |
