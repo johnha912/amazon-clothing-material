@@ -12,13 +12,13 @@ Lin, Yiu-Chang, Pradipto Das, and Ankur Datta. "Overview of the SIGIR 2018 eCom 
 
 McAuley, Julian, and Jure Leskovec. "Hidden Factors and Hidden Topics: Understanding Rating Dimensions with Review Text." *Proceedings of the 7th ACM Conference on Recommender Systems (RecSys '13)*, ACM, 2013, pp. 165–172. https://doi.org/10.1145/2507157.2507163
 
-Neupane, Suraj. "Amazon Reviews 2023 – Analyzing Visual Keywords." *Kaggle*. https://www.kaggle.com/code/surajneupane/amazon-reviews-2023-analyzing-visual-keywords
+Neupane, Suraj. "Amazon Reviews 2023 – Analyzing Visual Keywords." *Kaggle*, version 6, 23 July 2024. https://www.kaggle.com/code/surajneupane/amazon-reviews-2023-analyzing-visual-keywords
 
-PandeyMritunjay. "Recommendation system Optimised." *Kaggle*. https://www.kaggle.com/code/pandeymritunjay/recommendation-system-optimised
+PandeyMritunjay. "Recommendation system Optimised." *Kaggle*, version 1, 21 January 2026. https://www.kaggle.com/code/pandeymritunjay/recommendation-system-optimised
 
 Sanh, Victor, Lysandre Debut, Julien Chaumond, and Thomas Wolf. "DistilBERT, a Distilled Version of BERT: Smaller, Faster, Cheaper and Lighter." *arXiv preprint* arXiv:1910.01108, 2019. https://arxiv.org/abs/1910.01108
 
-Uppala, Keerthana. "Multi-Class Star Rating Prediction on Amazon Video Games Reviews using PySpark." *Kaggle*. https://www.kaggle.com/code/keerthanauppala00/cn7030-multi-class-star-rating-prediction-on-amazo
+Uppala, Keerthana. "Multi-Class Star Rating Prediction on Amazon Video Games Reviews using PySpark." *Kaggle*, version 2, 23 April 2026. https://www.kaggle.com/code/keerthanauppala00/cn7030-multi-class-star-rating-prediction-on-amazo
 
 Wahba, Yasmen, Nazim Madhavji, and John Steinbacher. "A Comparison of SVM against Pre-trained Language Models (PLMs) for Text Classification Tasks." *arXiv preprint* arXiv:2211.02563, 2022. https://arxiv.org/abs/2211.02563
 
