@@ -15,11 +15,57 @@ Clothing material drives comfort, durability, and how a product ages, yet on Ama
 | **A — Material** | Can a model infer a product's dominant material from its listing text? | Multi-class classification | Macro-F1 (plus per-class F1) |
 | **B — Rating** | Do material, price, and department help predict the product's average rating? | Regression | RMSE, MAE |
 
-![Project pipeline](report/assets/project-pipeline.png)
+```mermaid
+flowchart LR
+    subgraph S0["Source"]
+        hf[("Amazon Reviews 2023<br/>Clothing, Shoes & Jewelry<br/>~7.2M products")]
+    end
+
+    subgraph S1["Sample & labels"]
+        pilot["explore_sample.py<br/>10k pilot · coverage stats"]
+        labels["src/labels.py<br/>dominant() · %-string labels only"]
+        makesample["src/make_sample.py<br/>sample by parent_asin hash · seed 42"]
+        sample[("data/sample.parquet<br/>249,762 rows · 36.4% labeled<br/>split = train / test")]
+    end
+
+    subgraph S2["Models & EDA"]
+        eda["analysis/eda.py<br/>Plotly charts"]
+        tfidf["analysis/material_tfidf.py<br/>Task A · TF-IDF + LogReg / SVM"]
+        bert["analysis/material_bert.py<br/>Task A · DistilBERT (GPU)"]
+        rating["analysis/rating.py<br/>Task B · mean / RF / XGBoost"]
+    end
+
+    subgraph S3["Outputs"]
+        evaluate["src/evaluate.py<br/>shared metrics"]
+        results[("results/*.csv<br/>macro-F1 · RMSE · MAE<br/>+ command, seed, data version")]
+        model[("models/<br/>saved pipelines · not committed")]
+        app["app/ · Streamlit demo<br/>paste listing → material"]
+        report["report/ · report + presentation<br/>due Dec 6"]
+    end
+
+    hf -- "first 10k records" --> pilot
+    hf --> makesample
+    labels -- "label rule" --> makesample
+    makesample -- "composition stripped from text" --> sample
+    sample -- "all rows" --> eda
+    sample -- "text" --> tfidf
+    sample -- "text" --> bert
+    sample -- "listing features" --> rating
+    tfidf --> evaluate
+    bert --> evaluate
+    rating --> evaluate
+    evaluate -- "scores on test split" --> results
+    tfidf -- "trained pipeline" --> model
+    model -- "loads model" --> app
+    eda -- "charts + findings" --> report
+    results -- "merged tables" --> report
+```
+
+Source: [`report/assets/project-pipeline.mmd`](report/assets/project-pipeline.mmd).
 
 ## Dataset
 
-We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**; the reproducible ~250k-record sample (`src/make_sample.py`, 249,762 rows) is built and the models will be rerun on it. On that sample only 36.4% of listings are labeled and 79.8% lack a price, so the pilot shares below are not representative. Raw data is never committed — the `data/` folder is gitignored.
+We use the Clothing, Shoes and Jewelry metadata of [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (Hou et al., McAuley Lab): about 7.2 million products, each with a title, feature bullets, description, price, department, and average rating. The current results use a **pilot of the first 10,000 records**; the reproducible ~250k-record sample (`python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000`, 249,762 rows, run by Rui Song, reported in Issue #1) is built and the models will be rerun on it. On that sample only 36.4% of listings are labeled and 79.8% lack a price, so the pilot shares below are not representative. Raw data is never committed — the `data/` folder is gitignored.
 
 Labels are not given; we extract them. A label is the highest-percentage fiber in a composition string such as "90% Polyester, 10% Spandex" (ties go to the first fiber listed). Only listings that carry such a string can be labeled:
 
@@ -52,7 +98,7 @@ Among labeled listings, polyester (~34%) and cotton (~31%) dominate, followed by
 | B | Random forest | ✅ Pilot results below |
 | B | XGBoost | ✅ Pilot results below |
 
-Each model family with results (TF-IDF material models, rating models) has a note in [`docs/model-notes/`](docs/model-notes/) explaining how it works, why we chose it for this dataset, and an error analysis with real examples.
+Each model family with results (TF-IDF material models, DistilBERT, rating models) has a note in [`docs/model-notes/`](docs/model-notes/) explaining how it works, why we chose it for this dataset, and an error analysis with real examples.
 
 ## Pilot results (10,000 listings)
 
@@ -64,7 +110,7 @@ Each model family with results (TF-IDF material models, rating models) has a not
 | TF-IDF + linear SVM | 0.5239 | **0.7364** |
 | DistilBERT (fine-tuned, Colab T4) | 0.3563 | 0.6899 |
 
-Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. DistilBERT matches the TF-IDF models on the large classes but never predicts the three rarest fibers (it was trained without class weights), which costs it most of its macro-F1. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
+Per-class F1 (logistic regression): leather is nearly solved (0.94) and cotton is solid (0.74), while spandex (0.20), wool (0.40), and nylon (0.48) are hard — they are rare and often blended. The most common confusion is polyester ↔ cotton. DistilBERT matches or beats logistic regression on cotton, polyester, leather, and nylon but never predicts the three rarest fibers (it was trained without class weights), which accounts for most of its macro-F1 gap; rayon (F1 0.07) and acrylic account for the rest. The DistilBERT row is provisional until its independent audit. Full tables, the confusion matrix, and error examples are in [`results/`](results/).
 
 ### Task B — Rating prediction
 

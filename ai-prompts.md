@@ -29,3 +29,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-29 | Claude Code | Pull the latest repo and rewrite the README with the task overview, pilot results, setup, layout, roadmap, and team. | `README.md` |
 | 2026-11-08 | Claude Code | Check Issue #1 against everyone's pushed work, integrate Yanglin's DistilBERT handoff, and finish the remaining Nguyen tasks. | Issue #1, `report/`, `README.md`, `AGENTS.md`, `results/` |
 | 2026-11-08 | Claude Code | Drop the member column from the prompt log. | `ai-prompts.md`, `AGENTS.md` |
+| 2026-11-08 | Claude Code | Replace the HTML and PNG project pipeline with a Mermaid diagram. | `report/assets/project-pipeline.mmd`, `README.md`, `report/sections/04_data_analysis.md` |

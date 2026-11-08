@@ -1,6 +1,52 @@
 # Data analysis
 
-![Project pipeline: from raw metadata to the sample, the three model tracks, and the merged outputs.](../assets/project-pipeline.png)
+```mermaid
+flowchart LR
+    subgraph S0["Source"]
+        hf[("Amazon Reviews 2023<br/>Clothing, Shoes & Jewelry<br/>~7.2M products")]
+    end
+
+    subgraph S1["Sample & labels"]
+        pilot["explore_sample.py<br/>10k pilot · coverage stats"]
+        labels["src/labels.py<br/>dominant() · %-string labels only"]
+        makesample["src/make_sample.py<br/>sample by parent_asin hash · seed 42"]
+        sample[("data/sample.parquet<br/>249,762 rows · 36.4% labeled<br/>split = train / test")]
+    end
+
+    subgraph S2["Models & EDA"]
+        eda["analysis/eda.py<br/>Plotly charts"]
+        tfidf["analysis/material_tfidf.py<br/>Task A · TF-IDF + LogReg / SVM"]
+        bert["analysis/material_bert.py<br/>Task A · DistilBERT (GPU)"]
+        rating["analysis/rating.py<br/>Task B · mean / RF / XGBoost"]
+    end
+
+    subgraph S3["Outputs"]
+        evaluate["src/evaluate.py<br/>shared metrics"]
+        results[("results/*.csv<br/>macro-F1 · RMSE · MAE<br/>+ command, seed, data version")]
+        model[("models/<br/>saved pipelines · not committed")]
+        app["app/ · Streamlit demo<br/>paste listing → material"]
+        report["report/ · report + presentation<br/>due Dec 6"]
+    end
+
+    hf -- "first 10k records" --> pilot
+    hf --> makesample
+    labels -- "label rule" --> makesample
+    makesample -- "composition stripped from text" --> sample
+    sample -- "all rows" --> eda
+    sample -- "text" --> tfidf
+    sample -- "text" --> bert
+    sample -- "listing features" --> rating
+    tfidf --> evaluate
+    bert --> evaluate
+    rating --> evaluate
+    evaluate -- "scores on test split" --> results
+    tfidf -- "trained pipeline" --> model
+    model -- "loads model" --> app
+    eda -- "charts + findings" --> report
+    results -- "merged tables" --> report
+```
+
+*Figure: Project pipeline, from raw metadata to the sample, the three model tracks, and the merged outputs (source: `report/assets/project-pipeline.mmd`).*
 
 We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). Each record holds a title, feature bullets, a description, a price, a category path from which we take the department, the average rating, and the number of ratings. The pilot analysis below uses the first 10,000 records; the same scripts rerun unchanged on the 50,000- and 250,000-product samples.
 

@@ -11,7 +11,7 @@ We study two linked questions on the Clothing, Shoes and Jewelry category of Ama
 | Models | TF-IDF + logistic regression, TF-IDF + linear SVM, DistilBERT | Mean baseline, random forest, XGBoost |
 | Metric | Macro-F1 | RMSE and MAE |
 
-The dataset poses three challenges. First, only 46% of listings carry a composition string, so most products have no label and the labeled ones may not be representative. Second, the labels are heavily imbalanced: polyester and cotton make up 65% of labeled listings, while several fibers have only a handful of examples. Third, the label can mean different things across products, because a shoe's composition string often describes the sole rather than the upper.
+The dataset poses three challenges. First, only 46% of listings in the 10,000-record pilot carry a composition string (36.4% in the ~250,000-product sample), so most products have no label and the labeled ones may not be representative. Second, the labels are heavily imbalanced: polyester and cotton make up 65% of labeled listings, while several fibers have only a handful of examples. Third, the label can mean different things across products, because a shoe's composition string often describes the sole rather than the upper.
 
 ## Proposed method in brief
 

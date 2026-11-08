@@ -8,8 +8,8 @@ Predict a clothing product's dominant material (Task A: classification, macro-F1
 
 ## Status
 
-- Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239, DistilBERT 0.3563 (same 903 test rows, 9 classes; `results/material_comparison.csv`, `docs/model-notes/`). DistilBERT has no independent audit yet.
-- Sample delivered: `data/sample.parquet` 249,762 rows, `src/make_sample.py` commit 2219c1e, seed 42 (36.4% labeled). No model has been rerun on it yet.
+- Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239, DistilBERT 0.3563 (macro-F1 rechecked with `src/evaluate.py`; same 903 test-row counts, 9 classes; `results/material_comparison.csv`, `docs/model-notes/`). DistilBERT has no independent audit yet.
+- Sample delivered (Rui Song, Issue #1): `python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000` → `data/sample.parquet` 249,762 rows, `src/make_sample.py` commit 2219c1e, seed 42 (36.4% labeled). No model has been rerun on it yet.
 - Report and presentation due Sun Dec 6; presentations streamed Thu Dec 17.
 - Open question: do shoes stay in scope? (sole vs. upper makes their labels noisy). Yanglin and Nguyen decide.
 
