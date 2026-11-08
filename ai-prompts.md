@@ -31,3 +31,4 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Drop the member column from the prompt log. | `ai-prompts.md`, `AGENTS.md` |
 | 2026-11-08 | Claude Code | Replace the HTML and PNG project pipeline with a Mermaid diagram. | `report/assets/project-pipeline.mmd`, `README.md`, `report/sections/04_data_analysis.md` |
 | 2026-11-08 | Claude Code | Use Yanglin's release zip as the DistilBERT source of record. | `analysis/material_bert.py`, `results/` |
+| 2026-11-08 | Claude Code | Check everything still missing in Issue #1 and finish it. | Issue #1, `report/sections/related_work.md` |
