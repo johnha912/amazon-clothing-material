@@ -7,7 +7,7 @@ flowchart LR
     end
 
     subgraph S1["Sample & labels"]
-        pilot["explore_sample.py<br/>10k pilot · coverage stats"]
+        pilot["explore_sample.py · analysis/load_data.py<br/>10k pilot (meta_head.jsonl)<br/>current results"]
         labels["src/labels.py<br/>dominant() · %-string labels only"]
         makesample["src/make_sample.py<br/>sample by parent_asin hash · seed 42"]
         sample[("data/sample.parquet<br/>249,762 rows · 36.4% labeled<br/>split = train / test")]
@@ -21,7 +21,7 @@ flowchart LR
     end
 
     subgraph S3["Outputs"]
-        evaluate["src/evaluate.py<br/>shared metrics"]
+        evaluate["src/evaluate.py<br/>shared metrics (planned path)"]
         results[("results/*.csv<br/>macro-F1 · RMSE · MAE<br/>+ command, seed, data version")]
         model[("models/<br/>saved pipelines · not committed")]
         app["app/ · Streamlit demo<br/>paste listing → material"]
@@ -29,6 +29,7 @@ flowchart LR
     end
 
     hf -- "first 10k records" --> pilot
+    pilot -. "pilot data for all three models" .-> tfidf
     hf --> makesample
     labels -- "label rule" --> makesample
     makesample -- "composition stripped from text" --> sample
@@ -36,19 +37,22 @@ flowchart LR
     sample -- "text" --> tfidf
     sample -- "text" --> bert
     sample -- "listing features" --> rating
-    tfidf --> evaluate
-    bert --> evaluate
-    rating --> evaluate
-    evaluate -- "scores on test split" --> results
+    tfidf -- "pilot: sklearn.metrics" --> results
+    bert -- "pilot: sklearn.metrics" --> results
+    rating -- "pilot: sklearn.metrics" --> results
+    tfidf -. "250k rerun" .-> evaluate
+    bert -. "250k rerun" .-> evaluate
+    rating -. "250k rerun" .-> evaluate
+    evaluate -. "scores on test split" .-> results
     tfidf -- "trained pipeline" --> model
     model -- "loads model" --> app
     eda -- "charts + findings" --> report
     results -- "merged tables" --> report
 ```
 
-*Figure: Project pipeline, from raw metadata to the sample, the three model tracks, and the merged outputs (source: `report/assets/project-pipeline.mmd`).*
+*Figure: Project pipeline, from raw metadata to the sample, the three model tracks, and the merged outputs. Solid arrows are what produced the current pilot numbers (`data/meta_head.jsonl`, `sklearn.metrics`); dashed arrows are the path for the ~250k rerun through `src/evaluate.py` (source: `report/assets/project-pipeline.mmd`).*
 
-We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). Each record holds a title, feature bullets, a description, a price, a category path from which we take the department, the average rating, and the number of ratings. The pilot analysis below uses the first 10,000 records; the same scripts rerun unchanged on the 50,000- and 250,000-product samples.
+We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). Each record holds a title, feature bullets, a description, a price, a category path from which we take the department, the average rating, and the number of ratings. The pilot analysis below uses the first 10,000 records; the same scripts rerun unchanged on the ~250,000-product sample (249,762 rows).
 
 A listing's label is the known fiber with the highest stated percentage, read from the structured details or the feature bullets: $m^* = \arg\max_{m \in \mathcal{M}} p_m$, where $p_m$ is the percentage of fiber $m$ and ties go to the fiber listed first. Listings without a composition string get no label and are left out of Task A rather than guessed. In the pilot, 4,602 of 10,000 listings (46.0%) receive a label, and the classes are strongly imbalanced, which is why Task A is scored with macro-F1 rather than accuracy.
 

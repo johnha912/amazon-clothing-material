@@ -4,7 +4,7 @@ flowchart LR
     end
 
     subgraph S1["Sample & labels"]
-        pilot["explore_sample.py<br/>10k pilot · coverage stats"]
+        pilot["explore_sample.py · analysis/load_data.py<br/>10k pilot (meta_head.jsonl)<br/>current results"]
         labels["src/labels.py<br/>dominant() · %-string labels only"]
         makesample["src/make_sample.py<br/>sample by parent_asin hash · seed 42"]
         sample[("data/sample.parquet<br/>249,762 rows · 36.4% labeled<br/>split = train / test")]
@@ -18,7 +18,7 @@ flowchart LR
     end
 
     subgraph S3["Outputs"]
-        evaluate["src/evaluate.py<br/>shared metrics"]
+        evaluate["src/evaluate.py<br/>shared metrics (planned path)"]
         results[("results/*.csv<br/>macro-F1 · RMSE · MAE<br/>+ command, seed, data version")]
         model[("models/<br/>saved pipelines · not committed")]
         app["app/ · Streamlit demo<br/>paste listing → material"]
@@ -26,6 +26,7 @@ flowchart LR
     end
 
     hf -- "first 10k records" --> pilot
+    pilot -. "pilot data for all three models" .-> tfidf
     hf --> makesample
     labels -- "label rule" --> makesample
     makesample -- "composition stripped from text" --> sample
@@ -33,10 +34,13 @@ flowchart LR
     sample -- "text" --> tfidf
     sample -- "text" --> bert
     sample -- "listing features" --> rating
-    tfidf --> evaluate
-    bert --> evaluate
-    rating --> evaluate
-    evaluate -- "scores on test split" --> results
+    tfidf -- "pilot: sklearn.metrics" --> results
+    bert -- "pilot: sklearn.metrics" --> results
+    rating -- "pilot: sklearn.metrics" --> results
+    tfidf -. "250k rerun" .-> evaluate
+    bert -. "250k rerun" .-> evaluate
+    rating -. "250k rerun" .-> evaluate
+    evaluate -. "scores on test split" .-> results
     tfidf -- "trained pipeline" --> model
     model -- "loads model" --> app
     eda -- "charts + findings" --> report
