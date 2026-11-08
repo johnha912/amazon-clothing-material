@@ -1,6 +1,6 @@
 # Model note — Rating prediction (Task B)
 
-_Owner: Nguyen Ha · Role: Modeling · Script: `analysis/rating.py` · Status: pilot numbers on the first 10,000 metadata records (`data/meta_head.jsonl` pilot, seed 42); rerun unchanged on Rui's ~250k sample (249,762 rows, delivered Nov 4) to refresh every number below. Metrics come from `sklearn.metrics` on the untouched test split, per AGENTS.md until `src/evaluate.py` exists._
+_Owner: Nguyen Ha · Role: Modeling · Script: `analysis/rating.py` · Status: pilot numbers on the first 10,000 metadata records (`data/meta_head.jsonl` pilot, seed 42); rerun unchanged on Rui's ~250k sample (249,762 rows, delivered Nov 4) to refresh every number below. Pilot metrics came from `sklearn.metrics` on the untouched test split, before `src/evaluate.py` existed; the ~250k rerun will score through `src/evaluate.py`._
 
 ## How the models work
 

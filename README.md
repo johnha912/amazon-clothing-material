@@ -44,14 +44,17 @@ flowchart LR
     end
 
     hf -- "first 10k records" --> pilot
-    pilot -. "pilot data for all three models" .-> tfidf
+    pilot -- "pilot data" --> eda
+    pilot -- "pilot data" --> tfidf
+    pilot -- "pilot data" --> bert
+    pilot -- "pilot data" --> rating
     hf --> makesample
     labels -- "label rule" --> makesample
     makesample -- "composition stripped from text" --> sample
-    sample -- "all rows" --> eda
-    sample -- "text" --> tfidf
-    sample -- "text" --> bert
-    sample -- "listing features" --> rating
+    sample -. "250k rerun" .-> eda
+    sample -. "250k rerun" .-> tfidf
+    sample -. "250k rerun" .-> bert
+    sample -. "250k rerun" .-> rating
     tfidf -- "pilot: sklearn.metrics" --> results
     bert -- "pilot: sklearn.metrics" --> results
     rating -- "pilot: sklearn.metrics" --> results
@@ -65,7 +68,7 @@ flowchart LR
     results -- "merged tables" --> report
 ```
 
-Source: [`report/assets/project-pipeline.mmd`](report/assets/project-pipeline.mmd).
+Solid arrows are steps already run, and the current pilot numbers come from `data/meta_head.jsonl` scored with `sklearn.metrics`; dashed arrows are the path for the ~250k rerun through `src/evaluate.py`. Source: [`report/assets/project-pipeline.mmd`](report/assets/project-pipeline.mmd).
 
 ## Dataset
 

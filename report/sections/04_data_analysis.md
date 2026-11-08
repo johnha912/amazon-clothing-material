@@ -29,14 +29,17 @@ flowchart LR
     end
 
     hf -- "first 10k records" --> pilot
-    pilot -. "pilot data for all three models" .-> tfidf
+    pilot -- "pilot data" --> eda
+    pilot -- "pilot data" --> tfidf
+    pilot -- "pilot data" --> bert
+    pilot -- "pilot data" --> rating
     hf --> makesample
     labels -- "label rule" --> makesample
     makesample -- "composition stripped from text" --> sample
-    sample -- "all rows" --> eda
-    sample -- "text" --> tfidf
-    sample -- "text" --> bert
-    sample -- "listing features" --> rating
+    sample -. "250k rerun" .-> eda
+    sample -. "250k rerun" .-> tfidf
+    sample -. "250k rerun" .-> bert
+    sample -. "250k rerun" .-> rating
     tfidf -- "pilot: sklearn.metrics" --> results
     bert -- "pilot: sklearn.metrics" --> results
     rating -- "pilot: sklearn.metrics" --> results
@@ -50,7 +53,7 @@ flowchart LR
     results -- "merged tables" --> report
 ```
 
-*Figure: Project pipeline, from raw metadata to the sample, the three model tracks, and the merged outputs. Solid arrows are what produced the current pilot numbers (`data/meta_head.jsonl`, `sklearn.metrics`); dashed arrows are the path for the ~250k rerun through `src/evaluate.py` (source: `report/assets/project-pipeline.mmd`).*
+*Figure: Project pipeline, from raw metadata to the sample, the three model tracks, and the merged outputs. Solid arrows are steps already run, and the current pilot numbers come from `data/meta_head.jsonl` scored with `sklearn.metrics`; dashed arrows are the path for the ~250k rerun through `src/evaluate.py` (source: `report/assets/project-pipeline.mmd`).*
 
 We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). Each record holds a title, feature bullets, a description, a price, a category path from which we take the department, the average rating, and the number of ratings. The pilot analysis below uses the first 10,000 records; the same scripts rerun unchanged on the ~250,000-product sample (249,762 rows).
 
