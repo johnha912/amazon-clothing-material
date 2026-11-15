@@ -1,19 +1,29 @@
 """Task A baselines: predict the dominant material from listing text.
 
-Owner: Nguyen Ha (Issue #1, Week 1).
+Owner: Nguyen Ha (Issue #2, Week 2: the 250k-sample rerun; Week 1 pilot
+written for Issue #1).
 
 Run from the repo root:
 
     python analysis/material_tfidf.py
 
 Trains TF-IDF + logistic regression and TF-IDF + linear SVM on
-`split == "train"`, reports macro-F1 on `split == "test"`, writes
-`results/material_tfidf.csv`, and saves the logistic-regression pipeline to
+`split == "train"` and reports macro-F1 on `split == "test"` through the
+shared evaluator `src/evaluate.py`. Confidence intervals are still
+pending: they will be computed from the saved test-set predictions once
+the shared bootstrap helper lands in `src/evaluate.py` (Rui Song's open
+Issue #2 task), so no retraining will be needed.
+Predictions are merged back onto the test rows by `parent_asin` and the
+merge is asserted one-to-one before anything is scored, so a prediction
+can never be silently paired with the wrong row. Writes
+`results/material_tfidf.csv` and `results/material_tfidf_predictions.csv`,
+and saves the logistic-regression pipeline to
 `models/material_tfidf.joblib` for the demo app.
 
 Data: `data/sample.parquet` when it exists (built by `src/make_sample.py`,
-Rui Song); until then the first 10,000 records of `data/meta_head.jsonl`,
-labeled by the shared rule (percentage composition strings only).
+Rui Song) — for Issue #2 that is the 249,762-row sample; until then the
+first 10,000 records of `data/meta_head.jsonl`, labeled by the shared rule
+(percentage composition strings only).
 
 Leakage (AGENTS.md): the composition strings the label is parsed from are
 removed from `text` before training, and `average_rating` / `rating_number`
@@ -23,6 +33,7 @@ are never used as features.
 # %% Imports and config
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import joblib
@@ -30,17 +41,22 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (accuracy_score, classification_report,
-                             confusion_matrix, f1_score)
+                             confusion_matrix)
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from src.evaluate import material_scores  # noqa: E402  shared metrics entry point (AGENTS.md)
+
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 MODELS_DIR = ROOT / "models"
 SEED = 42
-MIN_CLASS_ROWS = 20  # drop classes too rare to split; src/labels.py will own
-                     # the merged class list once it lands
+MIN_CLASS_ROWS = 20  # drop classes too rare to split; matches
+                     # analysis/material_bert.py so both Task A models score
+                     # the same rows (on sample.parquet the labels already
+                     # come from src/labels.py)
 
 # %% Load the data (sample.parquet preferred, meta_head.jsonl fallback)
 
@@ -48,6 +64,28 @@ from load_data import load_data
 
 df, DATA_VERSION = load_data()
 print(f"Data: {DATA_VERSION}; seed={SEED}")
+
+# %% Helper: id-aligned predictions
+
+def attach_predictions(test: pd.DataFrame, predicted) -> pd.DataFrame:
+    """Merge one model's predictions back onto the test rows by parent_asin.
+
+    Scoring reads the merged frame, never the raw prediction array, and the
+    asserts fail loudly if the merge is not an exact one-to-one alignment
+    (the team's merge-on-id rule).
+    """
+    preds = (test
+             .loc[:, ["parent_asin"]]
+             .assign(predicted=predicted))
+    merged = test.merge(preds, on="parent_asin", how="left",
+                        validate="one_to_one")
+    assert len(merged) == len(test), "prediction merge changed the test row count"
+    assert merged.parent_asin.is_unique, "test parent_asin values are not unique"
+    assert (merged.parent_asin.to_numpy() == test.parent_asin.to_numpy()).all(), \
+        "prediction merge reordered the test rows"
+    assert merged.predicted.notna().all(), "some test rows got no prediction"
+    return merged
+
 
 # %% Prepare Task A: labeled rows only, classes with enough support
 
@@ -94,31 +132,42 @@ models = {
 }
 
 rows = []
-preds = {}
+scored = {}
 for name, model in models.items():
     model.fit(train.text, train.material)
-    pred = model.predict(test.text)
-    preds[name] = pred
+    frame = attach_predictions(test, model.predict(test.text))
+    scored[name] = frame
     rows.append({"model": name,
-                 "macro_f1": round(f1_score(test.material, pred, average="macro"), 4),
-                 "accuracy": round(accuracy_score(test.material, pred), 4),
+                 "macro_f1": round(material_scores(frame.material, frame.predicted)["macro_f1"], 4),
+                 "accuracy": round(accuracy_score(frame.material, frame.predicted), 4),
                  "n_train": len(train), "n_test": len(test),
                  "n_classes": int(task_a.material.nunique()),
                  "command": "python analysis/material_tfidf.py",
                  "seed": SEED, "data_version": DATA_VERSION,
                  "test_ids_sha256": TEST_IDS_SHA256})
-    print(f"\n{name}: macro-F1={rows[-1]['macro_f1']}, accuracy={rows[-1]['accuracy']}")
+    print(f"\n{name}: macro-F1={rows[-1]['macro_f1']}, "
+          f"accuracy={rows[-1]['accuracy']}")
     if name == "tfidf_logreg":
-        print(classification_report(test.material, pred, digits=3))
+        print(classification_report(frame.material, frame.predicted, digits=3))
 
-# %% Save metrics and the logistic-regression pipeline for the demo app
+# %% Save metrics, per-row predictions, and the logreg pipeline for the demo app
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 (pd.DataFrame(rows)
  .to_csv(RESULTS_DIR / "material_tfidf.csv", index=False))
+
+# attach_predictions asserted each scored frame is in test order, so the
+# positional .to_numpy() columns below are aligned by parent_asin.
+predictions = (test
+               .loc[:, ["parent_asin", "material"]]
+               .assign(tfidf_logreg=scored["tfidf_logreg"].predicted.to_numpy(),
+                       tfidf_svm=scored["tfidf_svm"].predicted.to_numpy()))
+predictions.to_csv(RESULTS_DIR / "material_tfidf_predictions.csv", index=False)
+
 joblib.dump(models["tfidf_logreg"], MODELS_DIR / "material_tfidf.joblib")
-print("\nsaved results/material_tfidf.csv and models/material_tfidf.joblib")
+print("\nsaved results/material_tfidf.csv, "
+      "results/material_tfidf_predictions.csv and models/material_tfidf.joblib")
 
 # %% Error analysis for the model note (docs/model-notes/material_tfidf.md)
 # Per-class scores, the confusion matrix, and the logreg model's mistakes on
@@ -126,26 +175,26 @@ print("\nsaved results/material_tfidf.csv and models/material_tfidf.joblib")
 
 import plotly.express as px
 
-best = preds["tfidf_logreg"]
+best_frame = scored["tfidf_logreg"]
+best = best_frame.predicted
 class_names = sorted(test.material.unique())
 
-report = classification_report(test.material, best, output_dict=True, digits=4)
+report = classification_report(best_frame.material, best, output_dict=True, digits=4)
 (pd.DataFrame(report).transpose()
  .to_csv(RESULTS_DIR / "material_tfidf_per_class.csv"))
 
-(pd.DataFrame(confusion_matrix(test.material, best, labels=class_names),
+(pd.DataFrame(confusion_matrix(best_frame.material, best, labels=class_names),
               index=class_names, columns=class_names)
  .to_csv(RESULTS_DIR / "material_tfidf_confusion.csv"))
 
-fig = px.imshow(confusion_matrix(test.material, best, labels=class_names),
+fig = px.imshow(confusion_matrix(best_frame.material, best, labels=class_names),
                 x=class_names, y=class_names, text_auto=True,
                 labels={"x": "predicted", "y": "true", "color": "count"},
                 title="TF-IDF + logistic regression — confusion matrix (test)")
 fig.write_html(RESULTS_DIR / "material_tfidf_confusion.html", include_plotlyjs="cdn")
 fig.write_image(RESULTS_DIR / "material_tfidf_confusion.png", width=900, height=750, scale=2)
 
-errors = (test
-          .assign(predicted=best)
+errors = (best_frame
           .query("predicted != material")
           .loc[:, ["parent_asin", "title", "material", "predicted", "text"]]
           .assign(text=lambda d: d.text.str.slice(0, 300)))

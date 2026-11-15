@@ -42,3 +42,8 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-08 | Claude Code | Fill in the year for the three Kaggle notebooks in the reference list. | `report/sections/11_references.md` |
 | 2026-11-08 | Claude Code | Are meeting notes required? If not, delete them and push. | `report/meeting-notes.md`, `README.md` |
 | 2026-11-08 | Claude Code | Update the README. | `README.md` |
+| 2026-11-14 | Claude Code | Check whether the Issue #2 code package I prepared is OK. | `analysis/material_tfidf.py`, `analysis/rating.py` |
+| 2026-11-14 | Claude Code | Go ahead with your plan and use a team of subagents if needed: rerun on the 250k sample and update the report; tell me when it is ready to push. | `results/`, `report/sections/`, `docs/model-notes/`, `README.md`, `AGENTS.md` |
+| 2026-11-14 | Claude Code | Prioritize my tasks that do not affect the other two members. | Scope of the Issue #2 changes |
+| 2026-11-14 | Claude Code | OK, rerun TF-IDF and rating after the text-cleaning fix. | `analysis/load_data.py`, `results/` |
+| 2026-11-14 | Claude Code | Should we move the rating run to Kaggle or Colab? Guide me to run it on my machine. | `results/rating*.csv`, `results/rating_residual_plot.png` |

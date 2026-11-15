@@ -1,16 +1,25 @@
 """Task B: predict a product's average rating from its listing.
 
-Owner: Nguyen Ha (Issue #1, Week 1).
+Owner: Nguyen Ha (Issue #2, Week 2: the 250k-sample rerun; Week 1 pilot
+written for Issue #1).
 
 Run from the repo root:
 
     python analysis/rating.py
 
 Trains a mean baseline, a random forest, and XGBoost on `split == "train"`,
-reports RMSE and MAE on `split == "test"`, and writes `results/rating.csv`.
+reports RMSE and MAE on `split == "test"` through the shared evaluator
+`src/evaluate.py`, and writes `results/rating.csv`. Confidence intervals
+are still pending: they will be computed from the saved test-set
+predictions once the shared bootstrap helper lands in `src/evaluate.py`
+(Rui Song's open Issue #2 task), so no retraining will be needed.
+Predictions are merged back onto the test rows by `parent_asin` and
+the merge is asserted one-to-one before anything is scored, and the per-row
+predictions are saved to `results/rating_predictions.csv`.
 
 Data: `data/sample.parquet` when it exists (built by `src/make_sample.py`,
-Rui Song); until then the first 10,000 records of `data/meta_head.jsonl`.
+Rui Song) — for Issue #2 that is the 249,762-row sample; until then the
+first 10,000 records of `data/meta_head.jsonl`.
 
 Leakage (AGENTS.md): `average_rating` is the target. No feature is derived
 from the item's own ratings or reviews. `rating_number` is not a feature —
@@ -20,6 +29,7 @@ are listing fields (price, department, text lengths) plus the Task A
 """
 
 # %% Imports and config
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -28,12 +38,14 @@ from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_absolute_error, root_mean_squared_error
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBRegressor
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from src.evaluate import rating_scores  # noqa: E402  shared metrics entry point (AGENTS.md)
+
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 SEED = 42
@@ -44,6 +56,28 @@ from load_data import load_data
 
 df, DATA_VERSION = load_data()
 print(f"Data: {DATA_VERSION}; seed={SEED}")
+
+# %% Helper: id-aligned predictions
+
+def attach_predictions(test: pd.DataFrame, predicted) -> pd.DataFrame:
+    """Merge one model's predictions back onto the test rows by parent_asin.
+
+    Scoring reads the merged frame, never the raw prediction array, and the
+    asserts fail loudly if the merge is not an exact one-to-one alignment
+    (the team's merge-on-id rule).
+    """
+    preds = (test
+             .loc[:, ["parent_asin"]]
+             .assign(predicted=predicted))
+    merged = test.merge(preds, on="parent_asin", how="left",
+                        validate="one_to_one")
+    assert len(merged) == len(test), "prediction merge changed the test row count"
+    assert merged.parent_asin.is_unique, "test parent_asin values are not unique"
+    assert (merged.parent_asin.to_numpy() == test.parent_asin.to_numpy()).all(), \
+        "prediction merge reordered the test rows"
+    assert merged.predicted.notna().all(), "some test rows got no prediction"
+    return merged
+
 
 # %% Features from listing fields only (plus the material label)
 
@@ -96,27 +130,37 @@ models = {
 }
 
 rows = []
-preds = {}
+scored = {}
 for name, model in models.items():
     # Same weights for every model, baseline included, so the comparison is fair.
     model.fit(train[FEATURES], train.average_rating,
               model__sample_weight=train_weight)
-    pred = model.predict(test[FEATURES])
-    preds[name] = pred
+    frame = attach_predictions(test, model.predict(test[FEATURES]))
+    scored[name] = frame
+    scores = rating_scores(frame.average_rating, frame.predicted)
     rows.append({"model": name,
-                 "rmse": round(root_mean_squared_error(test.average_rating, pred), 4),
-                 "mae": round(mean_absolute_error(test.average_rating, pred), 4),
+                 "rmse": round(scores["rmse"], 4),
+                 "mae": round(scores["mae"], 4),
                  "n_train": len(train), "n_test": len(test),
                  "command": "python analysis/rating.py",
                  "seed": SEED, "data_version": DATA_VERSION})
     print(f"{name}: RMSE={rows[-1]['rmse']}, MAE={rows[-1]['mae']}")
 
-# %% Save metrics
+# %% Save metrics and per-row predictions
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 (pd.DataFrame(rows)
  .to_csv(RESULTS_DIR / "rating.csv", index=False))
-print("\nsaved results/rating.csv")
+
+# attach_predictions asserted each scored frame is in test order, so the
+# positional .to_numpy() columns below are aligned by parent_asin.
+predictions = (test
+               .loc[:, ["parent_asin", "average_rating"]]
+               .assign(mean_baseline=scored["mean_baseline"].predicted.to_numpy(),
+                       random_forest=scored["random_forest"].predicted.to_numpy(),
+                       xgboost=scored["xgboost"].predicted.to_numpy()))
+predictions.to_csv(RESULTS_DIR / "rating_predictions.csv", index=False)
+print("\nsaved results/rating.csv and results/rating_predictions.csv")
 
 # %% Residual analysis for the model note (docs/model-notes/rating.md)
 # XGBoost residuals on the test split: error by material group, the largest
@@ -124,9 +168,8 @@ print("\nsaved results/rating.csv")
 
 import plotly.express as px
 
-resid = (test
-         .assign(predicted=preds["xgboost"],
-                 residual=lambda d: d.average_rating - d.predicted))
+resid = (scored["xgboost"]
+         .assign(residual=lambda d: d.average_rating - d.predicted))
 
 by_material = (resid
                .groupby("material")

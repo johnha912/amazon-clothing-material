@@ -26,12 +26,18 @@ SEED = 42
 # Any comma- or sentence-delimited clause holding a percentage, in either order
 # ("90% Polyester", "Polyester 88%"), so no composition string survives into the
 # model input while the rest of the listing (title, other bullets) is kept.
-PCT_SEGMENT = re.compile(r"[^.;,\n◆•|]*\d{1,3}(?:\.\d+)?\s*%[^.;,\n◆•|]*")
+CLAUSE_DELIM = re.compile(r"((?<!\d)\.|\.(?!\d)|[;,\n◆•|])")  # a decimal point is not a delimiter
+PCT = re.compile(r"\d{1,3}(?:\.\d+)?\s*%")
 
 
 def strip_composition(text: str) -> str:
-    """Remove composition segments so the label source never reaches `text`."""
-    return re.sub(r"\s+", " ", PCT_SEGMENT.sub(" ", str(text))).strip(" .")
+    """Remove composition segments so the label source never reaches `text`.
+
+    Splits on clause delimiters and blanks every clause holding a digit followed by %.
+    Replaces a one-regex version whose backtracking was quadratic on long text."""
+    parts = CLAUSE_DELIM.split(str(text))
+    kept = "".join(" " if PCT.search(p) else p for p in parts)
+    return re.sub(r"\s+", " ", kept).strip(" .")
 
 
 def from_meta_head(path: Path) -> pd.DataFrame:
@@ -73,7 +79,11 @@ def load_data() -> tuple[pd.DataFrame, str]:
     make_sample.py commit when the official sample is used (AGENTS.md)."""
     parquet = DATA_DIR / "sample.parquet"
     if parquet.exists():
-        df = pd.read_parquet(parquet)
+        # src/labels.strip_composition misses "Cotton 100%" / "80%Combed cotton"
+        # forms, so reapply the stricter clause filter (14.7% of labeled rows).
+        df = (pd.read_parquet(parquet)
+              .assign(text=lambda d: d.text.fillna("").map(strip_composition),
+                      title=lambda d: d.title.fillna("").map(strip_composition)))
         commit = subprocess.run(["git", "log", "-1", "--format=%h", "--", "src/make_sample.py"],
                                 cwd=ROOT, capture_output=True, text=True).stdout.strip()
         return df, f"data/sample.parquet ({len(df):,} rows, make_sample.py {commit or 'uncommitted'})"
