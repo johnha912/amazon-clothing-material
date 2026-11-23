@@ -24,7 +24,7 @@ Clothing, Shoes and Jewelry from [Amazon Reviews 2023](https://amazon-reviews-20
 
 Labels are extracted, not given: a label is the highest-percentage fiber in a composition string such as "90% Polyester, 10% Spandex" (ties go to the first fiber listed). Only 36.4% of listings carry one (90,979), so Task A has 72,661 train / 18,318 test rows. Cotton (33.0%), polyester (31.3%), and leather (17.3%) dominate; 79.8% of listings have no price. Shoes stay in scope, so the leather class mostly measures footwear.
 
-**Leakage controls.** Composition strings are removed from the model text, so Task A is not a lookup of its own label (`analysis/load_data.py` blanks every clause holding a digit followed by a percent sign, and its self-check passes). `average_rating` and `rating_number` are never features; `rating_number` is only a sample weight in Task B. Review text and review stars only build the Task C target, never a feature. One fixed split (seed 42) for every run. Full rules: [AGENTS.md](AGENTS.md).
+**Leakage controls.** Composition strings are removed from the model text, so Task A is not a lookup of its own label (`analysis/load_data.py` blanks every clause holding a digit followed by a percent sign, and its self-check passes). `average_rating` and `rating_number` are never features; `rating_number` is only a row filter (at least 5 ratings) and a sample weight in Task B. Review text and review stars only build the Task C target, never a feature. One fixed split (seed 42) for every run. Full rules: [AGENTS.md](AGENTS.md).
 
 ## Results (250k sample, test split)
 
@@ -44,22 +44,22 @@ Leather is nearly solved (F1 0.943 for logistic regression); metal (0.224, 27 te
 
 | Model | RMSE | MAE |
 |---|---|---|
-| Mean baseline | 0.7512 | 0.5385 |
-| Random forest | 0.7647 | 0.5509 |
-| XGBoost | **0.7373** | **0.5234** |
+| Mean baseline | 0.4955 | 0.3817 |
+| Random forest | 0.5044 | 0.3853 |
+| XGBoost | **0.4761** | **0.3620** |
 
-Listing features barely beat the mean (XGBoost is 1.9% lower in RMSE), and the hardest group is listings whose material could not be parsed (RMSE 0.7846).
+Only products with at least 5 ratings are kept (138,355 train / 34,836 test; seed 42), so these numbers are not comparable with the earlier unfiltered run (0.7512 / 0.7647 / 0.7373). Listing features beat the mean modestly (XGBoost is 3.9% lower in RMSE, our arithmetic; confidence intervals pending), and the hardest group is listings whose material could not be parsed (RMSE 0.4984).
 
 **Task C — Material sentiment** (`python analysis/review_sentiment.py`, lexicon version 1)
 
-Up to 20 reviews per product (866,008 reviews) are split into sentences; 209,830 sentences that name a fabric or a fabric feel are scored with a negation-aware lexicon, and a product's target is the share of its polar material sentences that are positive (15,397 products with at least 3). Only 18.6% of 1-star reviews mention the material at all, and the star average correlates only weakly with material sentiment (Spearman 0.292). Cotton (0.773) and polyester (0.776) draw the most fabric complaints, leather (0.843) the fewest.
+Up to 20 reviews per product (866,008 reviews) are split into sentences; 209,830 sentences that name a fabric or a fabric feel are scored with a negation-aware lexicon, and a product's target is the share of its polar material sentences that are positive (15,397 products with at least 3). Only 18.6% of 1-star reviews contain a lexicon-matched material sentence (`results/review_sentiment_run.json`), and the star average correlates only weakly with material sentiment (Spearman 0.292). Cotton (0.773) and polyester (0.776) draw the most fabric complaints, leather (0.843) the fewest.
 
 | Target (same 3,093 test products) | Mean baseline RMSE | XGBoost RMSE | Change |
 |---|---|---|---|
 | Material sentiment | 0.2795 | 0.2815 | +0.7% |
 | Star average | 0.4695 | 0.4487 | −4.4% |
 
-Listing fields say something about the overall rating but almost nothing about how the fabric feels.
+Listing fields say something about the overall rating but little about how the fabric feels (confidence intervals pending).
 
 ## Getting started
 
@@ -81,7 +81,7 @@ curl -L -C - -o data/reviews_Clothing_Shoes_and_Jewelry.jsonl.gz https://mcauley
 python analysis/load_data.py         # leakage self-check
 python analysis/eda.py               # EDA charts -> results/eda/
 python analysis/material_tfidf.py    # Task A
-python analysis/rating.py            # Task B (about 50 minutes on a laptop CPU)
+python analysis/rating.py            # Task B (about 21 minutes on a laptop CPU)
 python analysis/review_sentiment.py  # Task C
 ```
 

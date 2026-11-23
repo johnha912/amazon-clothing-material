@@ -2,8 +2,8 @@
   "command": "python analysis/rating.py",
   "seed": 42,
   "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
-  "n_train": 199838,
-  "n_test": 49924,
+  "n_train": 138355,
+  "n_test": 34836,
   "features": [
     "log_price",
     "has_price",
@@ -12,19 +12,22 @@
     "department",
     "material"
   ],
+  "min_rating_number": 5,
+  "n_train_before_filter": 199838,
+  "n_test_before_filter": 49924,
   "sample_weight": "log1p(rating_number)",
   "scores": {
     "mean_baseline": {
-      "rmse": 0.7512,
-      "mae": 0.5385
+      "rmse": 0.4955,
+      "mae": 0.3817
     },
     "random_forest": {
-      "rmse": 0.7647,
-      "mae": 0.5509
+      "rmse": 0.5044,
+      "mae": 0.3853
     },
     "xgboost": {
-      "rmse": 0.7373,
-      "mae": 0.5234
+      "rmse": 0.4761,
+      "mae": 0.362
     }
   },
   "hyperparameters": {
@@ -180,12 +183,12 @@
       "model__verbosity": null
     }
   },
-  "source_sha256": "1667a2c6e1b38b3b83f9b8b11c49be9d3ed412284ffb1775d7648f03dcbaa382",
-  "git_commit": "c05f8e209e2d740d601b77c4aa4927246be7d318",
-  "git_status": "M analysis/load_data.py\n M analysis/material_tfidf.py\n M analysis/rating.py\n M docs/feature-plan.md\n M results/rating_predictions.csv\n?? analysis/review_sentiment.py\n?? docs/model-notes/review_sentiment.md\n?? results/material_tfidf_run.json\n?? results/review_sentiment.csv\n?? results/review_sentiment_by_material.csv\n?? results/review_sentiment_lexicon_check.csv\n?? results/review_sentiment_noise_examples.csv\n?? results/review_sentiment_run.json",
+  "source_sha256": "98844db9026f4882d78144ec97b878fa94f630a11416b066459b1359ccf39dde",
+  "git_commit": "c5c12b1fa9f11d071f5267a7647e3f3099736992",
+  "git_status": "M analysis/rating.py\n M report/assets/project-pipeline.mmd\n M report/sections/01_introduction.md\n M report/sections/04_data_analysis.md\n M report/sections/05_methods.md\n M report/sections/06_experimental_setup.md\n M report/sections/07_results.md\n M report/sections/08_analysis.md\n M report/sections/09_discussion.md\n M report/sections/10_conclusion.md\n M report/sections/12_contributions_ai_usage.md\n M report/sections/related_implementations.md\n M results/rating.csv\n M results/rating_predictions.csv\n?? analysis/ci_from_predictions.py\n?? analysis/task_c_charts.py\n?? analysis/taskc_sst2_agreement.py\n?? report/sections/13_appendix_setup.md\n?? results/task_c_positive_by_stars.html\n?? results/task_c_positive_by_stars.png\n?? results/task_c_sentiment_by_material.html\n?? results/task_c_sentiment_by_material.png\n?? results/taskc_sst2_agreement.csv\n?? results/taskc_sst2_by_rating.csv",
   "platform": "Windows-11-10.0.26300-SP0",
-  "started_utc": "2026-11-23T19:58:56.189558+00:00",
-  "elapsed_seconds": 2916.94,
+  "started_utc": "2026-11-23T21:58:31.718878+00:00",
+  "elapsed_seconds": 1265.24,
   "versions": {
     "python": "3.14.3",
     "numpy": "2.5.3",

@@ -1,0 +1,13 @@
+metric,value
+material_sentences,209830
+polar_sentences,146981
+lexicon_neutral_sentences,62849
+agreement_polar,0.8529
+cohen_kappa_polar,0.6172
+sst2_positive_share_on_lexicon_neutral,0.4017
+confusion_lexicon_neg_sst2_neg,26911
+confusion_lexicon_neg_sst2_pos,5327
+confusion_lexicon_pos_sst2_neg,16298
+confusion_lexicon_pos_sst2_pos,98445
+seed,42
+model,distilbert-base-uncased-finetuned-sst-2-english

@@ -1,7 +1,9 @@
 """Task B: predict a product's average rating from its listing.
 
-Owner: Nguyen Ha (Issue #2, Week 2: the 250k-sample rerun; Week 1 pilot
-written for Issue #1).
+Owner: Nguyen Ha (Issue #3, Week 3: Task B noise filter — keep only
+products with `rating_number >= 5` — and the shared listing features from
+`analysis/load_data.py`; Issue #2 was the 250k-sample rerun, Issue #1 the
+pilot).
 
 Run from the repo root:
 
@@ -23,9 +25,10 @@ first 10,000 records of `data/meta_head.jsonl`.
 
 Leakage (AGENTS.md): `average_rating` is the target. No feature is derived
 from the item's own ratings or reviews. `rating_number` is not a feature —
-it is only used as a sample weight (log1p), which AGENTS.md allows. Inputs
-are listing fields (price, department, text lengths) plus the Task A
-`material` label (NaN becomes its own "unknown" category).
+it is only used to filter rows (keep `rating_number >= 5`, which AGENTS.md
+allows) and as a sample weight (log1p). Inputs are the shared listing
+features from `analysis/load_data.py` (price, department, text lengths)
+plus the Task A `material` label (NaN becomes its own "unknown" category).
 """
 
 # %% Imports and config
@@ -49,10 +52,14 @@ from src.evaluate import rating_scores  # noqa: E402  shared metrics entry point
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 SEED = 42
+# Task B noise filter: a star average based on 1-2 ratings is the noisiest
+# (instructor feedback), so Task B keeps only products with at least this
+# many ratings. AGENTS.md allows rating_number to filter rows.
+MIN_RATING_NUMBER = 5
 
 # %% Load the data (sample.parquet preferred, meta_head.jsonl fallback)
 
-from load_data import load_data, write_run_json
+from load_data import LISTING_FEATURES, add_listing_features, load_data, write_run_json
 
 df, DATA_VERSION = load_data()
 print(f"Data: {DATA_VERSION}; seed={SEED}")
@@ -81,26 +88,30 @@ def attach_predictions(test: pd.DataFrame, predicted) -> pd.DataFrame:
 
 # %% Features from listing fields only (plus the material label)
 
-def add_features(df: pd.DataFrame) -> pd.DataFrame:
-    return (df
-            .assign(has_price=lambda d: d.price.notna().astype(int),
-                    log_price=lambda d: np.log1p(d.price),
-                    title_words=lambda d: d.title.fillna("").str.split().str.len(),
-                    text_words=lambda d: d.text.fillna("").str.split().str.len(),
-                    material=lambda d: d.material.fillna("unknown"),
-                    department=lambda d: d.department.fillna("Unknown")))
+def keep_rated_enough(frame: pd.DataFrame) -> pd.DataFrame:
+    """Task B noise filter: keep only products with at least
+    MIN_RATING_NUMBER ratings (both splits). The filter drops rows whose
+    rating_number is missing as well: their star average is just as
+    unverifiable."""
+    return frame.query("rating_number >= @MIN_RATING_NUMBER")
 
 
-task_b = (df
-          .dropna(subset=["average_rating"])
-          .pipe(add_features))
+unfiltered = (df
+              .dropna(subset=["average_rating"])
+              .pipe(add_listing_features))
+task_b = unfiltered.pipe(keep_rated_enough)
 
 train = task_b.query("split == 'train'")
 test = task_b.query("split == 'test'")
+n_train_before = int((unfiltered.split == "train").sum())
+n_test_before = int((unfiltered.split == "test").sum())
+print(f"Task B filter (rating_number >= {MIN_RATING_NUMBER}): "
+      f"train kept {len(train):,} of {n_train_before:,} "
+      f"({n_train_before - len(train):,} dropped), "
+      f"test kept {len(test):,} of {n_test_before:,} "
+      f"({n_test_before - len(test):,} dropped)")
 print(f"Task B rows: train={len(train):,}, test={len(test):,}")
 
-FEATURES = ["log_price", "has_price", "title_words", "text_words",
-            "department", "material"]
 NUMERIC = ["log_price", "has_price", "title_words", "text_words"]
 CATEGORICAL = ["department", "material"]
 
@@ -112,7 +123,8 @@ def make_preprocess() -> ColumnTransformer:
         ("cat", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL),
     ])
 
-# rating_number appears ONLY here, as a weight — never as a feature.
+# rating_number appears ONLY as the filter above and here, as a weight —
+# never as a feature.
 train_weight = np.log1p(train.rating_number.fillna(0))
 
 # %% Train the three models and score them on the test split
@@ -133,9 +145,9 @@ rows = []
 scored = {}
 for name, model in models.items():
     # Same weights for every model, baseline included, so the comparison is fair.
-    model.fit(train[FEATURES], train.average_rating,
+    model.fit(train[LISTING_FEATURES], train.average_rating,
               model__sample_weight=train_weight)
-    frame = attach_predictions(test, model.predict(test[FEATURES]))
+    frame = attach_predictions(test, model.predict(test[LISTING_FEATURES]))
     scored[name] = frame
     scores = rating_scores(frame.average_rating, frame.predicted)
     rows.append({"model": name,
@@ -162,7 +174,9 @@ predictions = (test
 predictions.to_csv(RESULTS_DIR / "rating_predictions.csv", index=False)
 run_json = write_run_json(
     Path(__file__), DATA_VERSION, ["numpy", "pandas", "scikit-learn", "xgboost"],
-    n_train=len(train), n_test=len(test), features=FEATURES,
+    n_train=len(train), n_test=len(test), features=LISTING_FEATURES,
+    min_rating_number=MIN_RATING_NUMBER,
+    n_train_before_filter=n_train_before, n_test_before_filter=n_test_before,
     sample_weight="log1p(rating_number)",
     scores={row["model"]: {"rmse": row["rmse"], "mae": row["mae"]} for row in rows},
     hyperparameters={name: {k: v for k, v in m.get_params().items() if "__" in k}

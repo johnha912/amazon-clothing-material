@@ -1,4 +1,4 @@
 model,rmse,mae,n_train,n_test,command,seed,data_version
-mean_baseline,0.7512,0.5385,199838,49924,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"
-random_forest,0.7647,0.5509,199838,49924,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"
-xgboost,0.7373,0.5234,199838,49924,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"
+mean_baseline,0.4955,0.3817,138355,34836,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"
+random_forest,0.5044,0.3853,138355,34836,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"
+xgboost,0.4761,0.362,138355,34836,python analysis/rating.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)"

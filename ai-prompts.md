@@ -50,3 +50,7 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-16 | Claude Code | Add a run.json provenance file for the TF-IDF and rating runs so teammates can follow them. | `analysis/load_data.py`, `analysis/material_tfidf.py`, `analysis/rating.py`, `results/*_run.json` |
 | 2026-11-23 | Claude Code | Audit and push the Task C plan and the AGENTS.md rule so teammates can review them with the Week 3 issue. | `docs/feature-plan.md`, `AGENTS.md`, Issue #3 |
 | 2026-11-23 | Claude Code | Tighten the README, then commit and push the finished work. | `README.md`, Task C commit |
+| 2026-11-23 | Claude Code | Integrate my Issue #3 package (report sections, Task C charts, CI driver) and leave teammates' files to them. | `report/sections/`, `analysis/task_c_charts.py`, `analysis/ci_from_predictions.py` |
+| 2026-11-23 | Claude Code | Rerun Task B on the 250k sample with the rating_number >= 5 noise filter and the shared listing features. | `analysis/rating.py`, `results/rating*` |
+| 2026-11-23 | Claude Code | Save the Kaggle SST-2 agreement notebook as a .py script and commit its summary outputs. | `analysis/taskc_sst2_agreement.py`, `results/taskc_sst2_*.csv` |
+| 2026-11-23 | Claude Code | Tick the finished steps on Issues #2 and #3. | Issues #2, #3 |

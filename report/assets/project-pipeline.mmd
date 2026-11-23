@@ -15,6 +15,7 @@ flowchart LR
         tfidf["analysis/material_tfidf.py<br/>Task A · TF-IDF + LogReg / SVM"]
         bert["analysis/material_bert.py<br/>Task A · DistilBERT (GPU)"]
         rating["analysis/rating.py<br/>Task B · mean / RF / XGBoost"]
+        sent["analysis/review_sentiment.py<br/>Task C · lexicon sentiment"]
     end
 
     subgraph S3["Outputs"]
@@ -33,9 +34,12 @@ flowchart LR
     sample -- "250k run" --> tfidf
     sample -- "250k run" --> bert
     sample -- "250k run" --> rating
+    hf -- "reviews file, streamed" --> sent
+    sample -- "product ids + split" --> sent
     tfidf -- "predictions" --> evaluate
     bert -- "predictions (250k run pending)" --> evaluate
     rating -- "predictions" --> evaluate
+    sent -- "scores + checks" --> evaluate
     evaluate -- "scores on test split" --> results
     tfidf -- "trained pipeline" --> model
     model -- "loads model" --> app
