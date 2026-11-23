@@ -1,0 +1,5 @@
+target,model,rmse,mae,n_train,n_test,command,seed,data_version,reviews_version,rmse_vs_baseline
+material_sentiment,mean_baseline,0.2795,0.2275,12304,3093,python analysis/review_sentiment.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)","reviews_Clothing_Shoes_and_Jewelry.jsonl.gz (7109695439 bytes), 866,008 reviews kept, at most 20 per product",1.0
+material_sentiment,xgboost,0.2815,0.2264,12304,3093,python analysis/review_sentiment.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)","reviews_Clothing_Shoes_and_Jewelry.jsonl.gz (7109695439 bytes), 866,008 reviews kept, at most 20 per product",1.0072
+average_rating,mean_baseline,0.4695,0.3422,12304,3093,python analysis/review_sentiment.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)","reviews_Clothing_Shoes_and_Jewelry.jsonl.gz (7109695439 bytes), 866,008 reviews kept, at most 20 per product",1.0
+average_rating,xgboost,0.4487,0.3194,12304,3093,python analysis/review_sentiment.py,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)","reviews_Clothing_Shoes_and_Jewelry.jsonl.gz (7109695439 bytes), 866,008 reviews kept, at most 20 per product",0.9557

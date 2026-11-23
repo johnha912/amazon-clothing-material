@@ -1,0 +1,11 @@
+material,products,material_sentiment,star_average
+cotton,2754,0.773,4.259
+polyester,3348,0.776,4.19
+spandex,277,0.781,4.088
+metal,2,0.784,4.2
+rubber,3,0.806,4.133
+rayon,803,0.808,4.178
+nylon,625,0.809,4.203
+wool,72,0.815,4.26
+other,338,0.841,4.238
+leather,392,0.843,4.166

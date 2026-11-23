@@ -60,7 +60,7 @@ MIN_CLASS_ROWS = 20  # drop classes too rare to split; matches
 
 # %% Load the data (sample.parquet preferred, meta_head.jsonl fallback)
 
-from load_data import load_data
+from load_data import load_data, write_run_json
 
 df, DATA_VERSION = load_data()
 print(f"Data: {DATA_VERSION}; seed={SEED}")
@@ -166,8 +166,15 @@ predictions = (test
 predictions.to_csv(RESULTS_DIR / "material_tfidf_predictions.csv", index=False)
 
 joblib.dump(models["tfidf_logreg"], MODELS_DIR / "material_tfidf.joblib")
-print("\nsaved results/material_tfidf.csv, "
-      "results/material_tfidf_predictions.csv and models/material_tfidf.joblib")
+run_json = write_run_json(
+    Path(__file__), DATA_VERSION, ["numpy", "pandas", "scikit-learn", "joblib"],
+    n_train=len(train), n_test=len(test), n_classes=int(task_a.material.nunique()),
+    min_class_rows=MIN_CLASS_ROWS, test_ids_sha256=TEST_IDS_SHA256,
+    scores={row["model"]: {"macro_f1": row["macro_f1"], "accuracy": row["accuracy"]} for row in rows},
+    hyperparameters={name: {k: v for k, v in m.get_params().items() if "__" in k}
+                     for name, m in models.items()})
+print("\nsaved results/material_tfidf.csv, results/material_tfidf_predictions.csv, "
+      f"{run_json.relative_to(ROOT).as_posix()} and models/material_tfidf.joblib")
 
 # %% Error analysis for the model note (docs/model-notes/material_tfidf.md)
 # Per-class scores, the confusion matrix, and the logreg model's mistakes on

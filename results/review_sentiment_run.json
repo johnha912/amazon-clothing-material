@@ -1,0 +1,59 @@
+{
+  "command": "python analysis/review_sentiment.py",
+  "seed": 42,
+  "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
+  "reviews_version": "reviews_Clothing_Shoes_and_Jewelry.jsonl.gz (7109695439 bytes), 866,008 reviews kept, at most 20 per product",
+  "max_reviews": 20,
+  "min_polar": 3,
+  "material_sentences": 209830,
+  "task_c_products": 15397,
+  "n_train": 12304,
+  "n_test": 3093,
+  "features": [
+    "log_price",
+    "has_price",
+    "title_words",
+    "text_words",
+    "department",
+    "material"
+  ],
+  "spearman_star_vs_material": 0.2918,
+  "material_mention_share_by_star": {
+    "1.0": 0.186,
+    "2.0": 0.228,
+    "3.0": 0.227,
+    "4.0": 0.211,
+    "5.0": 0.158
+  },
+  "scores": {
+    "material_sentiment/mean_baseline": {
+      "rmse": 0.2795,
+      "mae": 0.2275
+    },
+    "material_sentiment/xgboost": {
+      "rmse": 0.2815,
+      "mae": 0.2264
+    },
+    "average_rating/mean_baseline": {
+      "rmse": 0.4695,
+      "mae": 0.3422
+    },
+    "average_rating/xgboost": {
+      "rmse": 0.4487,
+      "mae": 0.3194
+    }
+  },
+  "source_sha256": "b33e256b0bf77b9c3dc29a1c61d9241a46555e617539a1d99d43e6d7e08f43cd",
+  "git_commit": "c05f8e209e2d740d601b77c4aa4927246be7d318",
+  "git_status": "M analysis/load_data.py\n M analysis/material_tfidf.py\n M analysis/rating.py\n?? analysis/review_sentiment.py\n?? results/material_tfidf_run.json\n?? results/review_sentiment.csv\n?? results/review_sentiment_by_material.csv\n?? results/review_sentiment_lexicon_check.csv\n?? results/review_sentiment_noise_examples.csv\n?? results/review_sentiment_run.json",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "started_utc": "2026-11-23T20:30:34.981506+00:00",
+  "elapsed_seconds": 486.19,
+  "versions": {
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1"
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "command": "python analysis/rating.py",
+  "seed": 42,
+  "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
+  "n_train": 199838,
+  "n_test": 49924,
+  "features": [
+    "log_price",
+    "has_price",
+    "title_words",
+    "text_words",
+    "department",
+    "material"
+  ],
+  "sample_weight": "log1p(rating_number)",
+  "scores": {
+    "mean_baseline": {
+      "rmse": 0.7512,
+      "mae": 0.5385
+    },
+    "random_forest": {
+      "rmse": 0.7647,
+      "mae": 0.5509
+    },
+    "xgboost": {
+      "rmse": 0.7373,
+      "mae": 0.5234
+    }
+  },
+  "hyperparameters": {
+    "mean_baseline": {
+      "model__constant": null,
+      "model__quantile": null,
+      "model__strategy": "mean"
+    },
+    "random_forest": {
+      "prep__n_jobs": null,
+      "prep__remainder": "drop",
+      "prep__sparse_threshold": 0.3,
+      "prep__transformer_weights": null,
+      "prep__transformers": [
+        [
+          "num",
+          "SimpleImputer(strategy='median')",
+          [
+            "log_price",
+            "has_price",
+            "title_words",
+            "text_words"
+          ]
+        ],
+        [
+          "cat",
+          "OneHotEncoder(handle_unknown='ignore')",
+          [
+            "department",
+            "material"
+          ]
+        ]
+      ],
+      "prep__verbose": false,
+      "prep__verbose_feature_names_out": true,
+      "prep__num": "SimpleImputer(strategy='median')",
+      "prep__cat": "OneHotEncoder(handle_unknown='ignore')",
+      "prep__num__add_indicator": false,
+      "prep__num__copy": true,
+      "prep__num__fill_value": null,
+      "prep__num__keep_empty_features": false,
+      "prep__num__missing_values": NaN,
+      "prep__num__strategy": "median",
+      "prep__cat__categories": "auto",
+      "prep__cat__drop": null,
+      "prep__cat__dtype": "<class 'numpy.float64'>",
+      "prep__cat__feature_name_combiner": "concat",
+      "prep__cat__handle_unknown": "ignore",
+      "prep__cat__max_categories": null,
+      "prep__cat__min_frequency": null,
+      "prep__cat__sparse_output": true,
+      "model__bootstrap": true,
+      "model__ccp_alpha": 0.0,
+      "model__criterion": "squared_error",
+      "model__max_depth": null,
+      "model__max_features": 1.0,
+      "model__max_leaf_nodes": null,
+      "model__max_samples": null,
+      "model__min_impurity_decrease": 0.0,
+      "model__min_samples_leaf": 1,
+      "model__min_samples_split": 2,
+      "model__min_weight_fraction_leaf": 0.0,
+      "model__monotonic_cst": null,
+      "model__n_estimators": 300,
+      "model__n_jobs": -1,
+      "model__oob_score": false,
+      "model__random_state": 42,
+      "model__verbose": 0,
+      "model__warm_start": false
+    },
+    "xgboost": {
+      "prep__n_jobs": null,
+      "prep__remainder": "drop",
+      "prep__sparse_threshold": 0.3,
+      "prep__transformer_weights": null,
+      "prep__transformers": [
+        [
+          "num",
+          "SimpleImputer(strategy='median')",
+          [
+            "log_price",
+            "has_price",
+            "title_words",
+            "text_words"
+          ]
+        ],
+        [
+          "cat",
+          "OneHotEncoder(handle_unknown='ignore')",
+          [
+            "department",
+            "material"
+          ]
+        ]
+      ],
+      "prep__verbose": false,
+      "prep__verbose_feature_names_out": true,
+      "prep__num": "SimpleImputer(strategy='median')",
+      "prep__cat": "OneHotEncoder(handle_unknown='ignore')",
+      "prep__num__add_indicator": false,
+      "prep__num__copy": true,
+      "prep__num__fill_value": null,
+      "prep__num__keep_empty_features": false,
+      "prep__num__missing_values": NaN,
+      "prep__num__strategy": "median",
+      "prep__cat__categories": "auto",
+      "prep__cat__drop": null,
+      "prep__cat__dtype": "<class 'numpy.float64'>",
+      "prep__cat__feature_name_combiner": "concat",
+      "prep__cat__handle_unknown": "ignore",
+      "prep__cat__max_categories": null,
+      "prep__cat__min_frequency": null,
+      "prep__cat__sparse_output": true,
+      "model__objective": "reg:squarederror",
+      "model__base_score": null,
+      "model__booster": null,
+      "model__callbacks": null,
+      "model__colsample_bylevel": null,
+      "model__colsample_bynode": null,
+      "model__colsample_bytree": 0.9,
+      "model__device": null,
+      "model__early_stopping_rounds": null,
+      "model__enable_categorical": true,
+      "model__eval_metric": null,
+      "model__feature_types": null,
+      "model__feature_weights": null,
+      "model__gamma": null,
+      "model__grow_policy": null,
+      "model__importance_type": null,
+      "model__interaction_constraints": null,
+      "model__learning_rate": 0.06,
+      "model__max_bin": null,
+      "model__max_cat_threshold": null,
+      "model__max_cat_to_onehot": null,
+      "model__max_delta_step": null,
+      "model__max_depth": 6,
+      "model__max_leaves": null,
+      "model__min_child_weight": null,
+      "model__missing": NaN,
+      "model__monotone_constraints": null,
+      "model__multi_strategy": null,
+      "model__n_estimators": 400,
+      "model__n_jobs": -1,
+      "model__num_parallel_tree": null,
+      "model__random_state": 42,
+      "model__reg_alpha": null,
+      "model__reg_lambda": null,
+      "model__sampling_method": null,
+      "model__scale_pos_weight": null,
+      "model__subsample": 0.9,
+      "model__tree_method": null,
+      "model__validate_parameters": null,
+      "model__verbosity": null
+    }
+  },
+  "source_sha256": "1667a2c6e1b38b3b83f9b8b11c49be9d3ed412284ffb1775d7648f03dcbaa382",
+  "git_commit": "c05f8e209e2d740d601b77c4aa4927246be7d318",
+  "git_status": "M analysis/load_data.py\n M analysis/material_tfidf.py\n M analysis/rating.py\n M docs/feature-plan.md\n M results/rating_predictions.csv\n?? analysis/review_sentiment.py\n?? docs/model-notes/review_sentiment.md\n?? results/material_tfidf_run.json\n?? results/review_sentiment.csv\n?? results/review_sentiment_by_material.csv\n?? results/review_sentiment_lexicon_check.csv\n?? results/review_sentiment_noise_examples.csv\n?? results/review_sentiment_run.json",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "started_utc": "2026-11-23T19:58:56.189558+00:00",
+  "elapsed_seconds": 2916.94,
+  "versions": {
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1"
+  }
+}

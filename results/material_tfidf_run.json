@@ -1,0 +1,113 @@
+{
+  "command": "python analysis/material_tfidf.py",
+  "seed": 42,
+  "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
+  "n_train": 72661,
+  "n_test": 18318,
+  "n_classes": 10,
+  "min_class_rows": 20,
+  "test_ids_sha256": "8cc141bcab2fc2dd5d346234a894bc7e88c72735f9133d1afef05eef3cafa850",
+  "scores": {
+    "tfidf_logreg": {
+      "macro_f1": 0.5799,
+      "accuracy": 0.7326
+    },
+    "tfidf_svm": {
+      "macro_f1": 0.6203,
+      "accuracy": 0.7872
+    }
+  },
+  "hyperparameters": {
+    "tfidf_logreg": {
+      "tfidf__analyzer": "word",
+      "tfidf__binary": false,
+      "tfidf__decode_error": "strict",
+      "tfidf__dtype": "<class 'numpy.float64'>",
+      "tfidf__encoding": "utf-8",
+      "tfidf__input": "content",
+      "tfidf__lowercase": true,
+      "tfidf__max_df": 1.0,
+      "tfidf__max_features": 60000,
+      "tfidf__min_df": 2,
+      "tfidf__ngram_range": [
+        1,
+        2
+      ],
+      "tfidf__norm": "l2",
+      "tfidf__preprocessor": null,
+      "tfidf__smooth_idf": true,
+      "tfidf__stop_words": null,
+      "tfidf__strip_accents": null,
+      "tfidf__sublinear_tf": true,
+      "tfidf__token_pattern": "(?u)\\b\\w\\w+\\b",
+      "tfidf__tokenizer": null,
+      "tfidf__use_idf": true,
+      "tfidf__vocabulary": null,
+      "clf__C": 1.0,
+      "clf__class_weight": "balanced",
+      "clf__dual": false,
+      "clf__fit_intercept": true,
+      "clf__intercept_scaling": 1,
+      "clf__l1_ratio": 0.0,
+      "clf__max_iter": 1000,
+      "clf__n_jobs": null,
+      "clf__penalty": "deprecated",
+      "clf__random_state": 42,
+      "clf__solver": "lbfgs",
+      "clf__tol": 0.0001,
+      "clf__verbose": 0,
+      "clf__warm_start": false
+    },
+    "tfidf_svm": {
+      "tfidf__analyzer": "word",
+      "tfidf__binary": false,
+      "tfidf__decode_error": "strict",
+      "tfidf__dtype": "<class 'numpy.float64'>",
+      "tfidf__encoding": "utf-8",
+      "tfidf__input": "content",
+      "tfidf__lowercase": true,
+      "tfidf__max_df": 1.0,
+      "tfidf__max_features": 60000,
+      "tfidf__min_df": 2,
+      "tfidf__ngram_range": [
+        1,
+        2
+      ],
+      "tfidf__norm": "l2",
+      "tfidf__preprocessor": null,
+      "tfidf__smooth_idf": true,
+      "tfidf__stop_words": null,
+      "tfidf__strip_accents": null,
+      "tfidf__sublinear_tf": true,
+      "tfidf__token_pattern": "(?u)\\b\\w\\w+\\b",
+      "tfidf__tokenizer": null,
+      "tfidf__use_idf": true,
+      "tfidf__vocabulary": null,
+      "clf__C": 1.0,
+      "clf__class_weight": "balanced",
+      "clf__dual": "auto",
+      "clf__fit_intercept": true,
+      "clf__intercept_scaling": 1,
+      "clf__loss": "squared_hinge",
+      "clf__max_iter": 1000,
+      "clf__multi_class": "ovr",
+      "clf__penalty": "l2",
+      "clf__random_state": 42,
+      "clf__tol": 0.0001,
+      "clf__verbose": 0
+    }
+  },
+  "source_sha256": "1cb6a977dce9fb94514f0947ef00dee500ebe955c6a39daa2f41fd82d465909b",
+  "git_commit": "7c9e53f4591a296208ad707b50626d4e6f46d283",
+  "git_status": "M ai-prompts.md\n M analysis/load_data.py\n M analysis/material_tfidf.py\n M analysis/rating.py",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "started_utc": "2026-11-17T02:45:01.470827+00:00",
+  "elapsed_seconds": 353.95,
+  "versions": {
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0"
+  }
+}

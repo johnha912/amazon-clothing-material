@@ -52,7 +52,7 @@ SEED = 42
 
 # %% Load the data (sample.parquet preferred, meta_head.jsonl fallback)
 
-from load_data import load_data
+from load_data import load_data, write_run_json
 
 df, DATA_VERSION = load_data()
 print(f"Data: {DATA_VERSION}; seed={SEED}")
@@ -160,7 +160,15 @@ predictions = (test
                        random_forest=scored["random_forest"].predicted.to_numpy(),
                        xgboost=scored["xgboost"].predicted.to_numpy()))
 predictions.to_csv(RESULTS_DIR / "rating_predictions.csv", index=False)
-print("\nsaved results/rating.csv and results/rating_predictions.csv")
+run_json = write_run_json(
+    Path(__file__), DATA_VERSION, ["numpy", "pandas", "scikit-learn", "xgboost"],
+    n_train=len(train), n_test=len(test), features=FEATURES,
+    sample_weight="log1p(rating_number)",
+    scores={row["model"]: {"rmse": row["rmse"], "mae": row["mae"]} for row in rows},
+    hyperparameters={name: {k: v for k, v in m.get_params().items() if "__" in k}
+                     for name, m in models.items()})
+print("\nsaved results/rating.csv, results/rating_predictions.csv and "
+      f"{run_json.relative_to(ROOT).as_posix()}")
 
 # %% Residual analysis for the model note (docs/model-notes/rating.md)
 # XGBoost residuals on the test split: error by material group, the largest

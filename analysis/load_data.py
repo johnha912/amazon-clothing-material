@@ -9,9 +9,15 @@ import to `src/labels.py` when Rui's move lands.
 
 Self-check: python analysis/load_data.py
 """
+import hashlib
+import importlib.metadata
+import json
+import platform
 import re
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -23,6 +29,7 @@ from explore_sample import DETAIL_KEYS, dominant  # noqa: E402  the one labeling
 
 DATA_DIR = ROOT / "data"
 SEED = 42
+STARTED, STARTED_UTC = time.perf_counter(), datetime.now(timezone.utc)
 # Any comma- or sentence-delimited clause holding a percentage, in either order
 # ("90% Polyester", "Polyester 88%"), so no composition string survives into the
 # model input while the rest of the listing (title, other bullets) is kept.
@@ -89,6 +96,48 @@ def load_data() -> tuple[pd.DataFrame, str]:
         return df, f"data/sample.parquet ({len(df):,} rows, make_sample.py {commit or 'uncommitted'})"
     df = from_meta_head(DATA_DIR / "meta_head.jsonl")
     return df, f"data/meta_head.jsonl pilot ({len(df):,} rows)"
+
+
+LISTING_FEATURES = ["log_price", "has_price", "title_words", "text_words",
+                    "department", "material"]
+
+
+def add_listing_features(df: pd.DataFrame) -> pd.DataFrame:
+    """The Task B listing features (same as analysis/rating.py add_features),
+    shared with Task C so both targets are predicted from the same inputs."""
+    return (df
+            .assign(has_price=lambda d: d.price.notna().astype(int),
+                    log_price=lambda d: np.log1p(d.price),
+                    title_words=lambda d: d.title.fillna("").str.split().str.len(),
+                    text_words=lambda d: d.text.fillna("").str.split().str.len(),
+                    material=lambda d: d.material.fillna("unknown"),
+                    department=lambda d: d.department.fillna("Unknown")))
+
+
+def git_value(*arguments) -> str:
+    result = subprocess.run(["git", *arguments], cwd=ROOT, text=True, capture_output=True, check=False)
+    return result.stdout.strip() if result.returncode == 0 else "unavailable"
+
+
+def write_run_json(script: Path, data_version: str, packages: list[str], **fields) -> Path:
+    """Write results/<script>_run.json so teammates can rerun or audit a run
+    (same idea as results/material_bert_run.json). Elapsed time counts from
+    when this module was imported, i.e. the start of the analysis script."""
+    run = {
+        "command": f"python {script.relative_to(ROOT).as_posix()}",
+        "seed": SEED, "data_version": data_version, **fields,
+        "source_sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
+        "git_commit": git_value("rev-parse", "HEAD"),
+        "git_status": git_value("status", "--short"),
+        "platform": platform.platform(),
+        "started_utc": STARTED_UTC.isoformat(),
+        "elapsed_seconds": round(time.perf_counter() - STARTED, 2),
+        "versions": {"python": platform.python_version(),
+                     **{name: importlib.metadata.version(name) for name in packages}},
+    }
+    path = ROOT / "results" / f"{script.stem}_run.json"
+    path.write_text(json.dumps(run, indent=2, default=str), encoding="utf-8")
+    return path
 
 
 if __name__ == "__main__":
