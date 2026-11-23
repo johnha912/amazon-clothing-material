@@ -47,3 +47,5 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-14 | Claude Code | Prioritize my tasks that do not affect the other two members. | Scope of the Issue #2 changes |
 | 2026-11-14 | Claude Code | OK, rerun TF-IDF and rating after the text-cleaning fix. | `analysis/load_data.py`, `results/` |
 | 2026-11-14 | Claude Code | Should we move the rating run to Kaggle or Colab? Guide me to run it on my machine. | `results/rating*.csv`, `results/rating_residual_plot.png` |
+| 2026-11-16 | Claude Code | Add a run.json provenance file for the TF-IDF and rating runs so teammates can follow them. | `analysis/load_data.py`, `analysis/material_tfidf.py`, `analysis/rating.py`, `results/*_run.json` |
+| 2026-11-23 | Claude Code | Audit and push the Task C plan and the AGENTS.md rule so teammates can review them with the Week 3 issue. | `docs/feature-plan.md`, `AGENTS.md`, Issue #3 |

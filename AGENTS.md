@@ -4,11 +4,12 @@ Read this before writing code for this repo. If your AI tool does not load `AGEN
 
 ## Project
 
-Predict a clothing product's dominant material (Task A: classification, macro-F1) and its average rating (Task B: regression, RMSE and MAE) from Amazon Reviews 2023 metadata. Stack: Python 3.12+, pandas 3, scikit-learn, XGBoost, PyTorch with transformers, and Plotly. Versions are pinned in `requirements.txt`; don't add a library without asking the team.
+Predict a clothing product's dominant material (Task A: classification, macro-F1) and its average rating (Task B: regression, RMSE and MAE) from Amazon Reviews 2023 metadata, and (Task C, added 2026-11-23 after instructor feedback) the sentiment buyers express about the material in review text, as a less noisy target than the star average. Stack: Python 3.12+, pandas 3, scikit-learn, XGBoost, PyTorch with transformers, and Plotly. Versions are pinned in `requirements.txt`; don't add a library without asking the team.
 
 ## Status
 
 - 250k results (Nguyen Ha, Issue #2; `data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, seed 42, scored through `src/evaluate.py`): Task A (10 classes, 72,661 train / 18,318 test) TF-IDF + logistic regression macro-F1 0.5799, linear SVM 0.6203 (higher on both macro-F1 and accuracy; run on the cleaned text); Task B (199,838 train / 49,924 test) RMSE 0.7512 mean baseline, 0.7647 random forest, 0.7373 XGBoost. Confidence intervals pending (bootstrap helper in `src/evaluate.py`). DistilBERT has no 250k run yet (Yanglin Hu); its pilot macro-F1 0.3563 (first 10k records, 903 test rows, 9 classes; `results/material_comparison.csv`) is not comparable with the 250k numbers and has no independent audit yet. Leak fixed: `src/labels.strip_composition` left a percentage in 13,373 of 90,979 labeled texts (an uncleaned first run scored 0.6397 / 0.6932, inflated by about 0.06 to 0.07); `analysis/load_data.py` now blanks every clause holding a digit followed by a percent sign, its self-check passes (no digit followed by a percent sign remains in any labeled text), and 405 labeled rows have empty text; 42 labeled rows still hold a stray percent sign in forms the labeling rule does not read and 1,048 spell out "N percent" (a stricter cleaner is left for later). Task B was also rerun on the cleaned text.
+- Task C added 2026-11-23 (Issue #3) after instructor feedback that star averages are noisy (a 1-star review can be about shipping or sizing, not fabric): material sentiment from review text, plan in `docs/feature-plan.md`, awaiting team approval. Issue #2 stays open for the DistilBERT 250k run, the CI helper, and the demo.
 - Pilot (first 10k records): TF-IDF + logistic regression macro-F1 0.5572, linear SVM 0.5239 (`docs/model-notes/`); superseded by the 250k results above.
 - Sample delivered (Rui Song, Issue #1): `python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000` → `data/sample.parquet` 249,762 rows, `src/make_sample.py` commit 2219c1e, seed 42 (36.4% labeled).
 - Report and presentation due Sun Dec 6, 11:55 PM EST; presentations streamed Thu Dec 17 (not on the Canvas assignment pages).
@@ -23,7 +24,7 @@ Edit only the files you own, and run `git pull` before you start. `ai-prompts.md
 
 | Member | Owns |
 |---|---|
-| Nguyen Ha | `analysis/load_data.py`, `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/eda.py`, `report/` (including `report/sections/related_implementations.md`) |
+| Nguyen Ha | `analysis/load_data.py`, `analysis/material_tfidf.py`, `analysis/rating.py`, `analysis/review_sentiment.py`, `analysis/eda.py`, `report/` (including `report/sections/related_implementations.md`) |
 | Yanglin Hu | `analysis/material_bert.py` |
 | Rui Song | `src/`, `app/`, `report/sections/related_work.md` |
 
@@ -45,6 +46,7 @@ Edit only the files you own, and run `git pull` before you start. `ai-prompts.md
 - Task A: don't use `average_rating` or `rating_number` as features. Material is predicted from the listing alone.
 - Task B: `average_rating` is the target. `rating_number` is not a feature; it may only be used to filter or weight rows (for example, dropping items with very few ratings).
 - Task B: no feature may be derived from the item's own ratings or reviews (review text, helpful votes, review counts, and so on). Allowed inputs are listing fields and `material`.
+- Task C (material sentiment, plan in `docs/feature-plan.md`): review text and review stars build the target only, never a feature for any task. Features are the Task B features; the test split is the sample's `split == "test"` rows that have a target.
 
 ## Evaluation and numbers
 
