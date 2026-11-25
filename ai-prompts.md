@@ -27,6 +27,11 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Claude Code | Write the Related Implementations section from three Kaggle notebooks on Amazon Reviews 2023. | `report/sections/related_implementations.md` |
 | 2026-10-27 | Claude Code | Commit and push the Status update and the Related Implementations section. | Git |
 | 2026-10-29 | Claude Code | Pull the latest repo and rewrite the README with the task overview, pilot results, setup, layout, roadmap, and team. | `README.md` |
+| 2026-11-05 | Claude Code | Review the project state from memory and the repo. | Project status |
+| 2026-11-05 | Claude Code | Check the GitHub repo and Issue #1 for updates. | Issue #1 |
+| 2026-11-05 | Claude Code | Use subagents to find useful, verified papers for the project and list all candidates for review. | `report/sections/related_work.md` |
+| 2026-11-05 | Claude Code | Open all reference links so I can check each one myself. | `report/sections/related_work.md` |
+| 2026-11-05 | Claude Code | Audit the diff before pushing and fix the issues it found. | `report/sections/related_work.md` |
 | 2026-11-08 | Claude Code | Check Issue #1 against everyone's pushed work, integrate Yanglin's DistilBERT handoff, and finish the remaining Nguyen tasks. | Issue #1, `report/`, `README.md`, `AGENTS.md`, `results/` |
 | 2026-11-08 | Claude Code | Drop the member column from the prompt log. | `ai-prompts.md`, `AGENTS.md` |
 | 2026-11-08 | Claude Code | Replace the HTML and PNG project pipeline with a Mermaid diagram. | `report/assets/project-pipeline.mmd`, `README.md`, `report/sections/04_data_analysis.md` |
@@ -54,3 +59,8 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-23 | Claude Code | Rerun Task B on the 250k sample with the rating_number >= 5 noise filter and the shared listing features. | `analysis/rating.py`, `results/rating*` |
 | 2026-11-23 | Claude Code | Save the Kaggle SST-2 agreement notebook as a .py script and commit its summary outputs. | `analysis/taskc_sst2_agreement.py`, `results/taskc_sst2_*.csv` |
 | 2026-11-23 | Claude Code | Tick the finished steps on Issues #2 and #3. | Issues #2, #3 |
+| 2026-11-24 | Claude Code | Check Issues #2 and #3 and the latest repo state before I start. | Issues #2, #3 |
+| 2026-11-24 | Claude Code | Pull the repo after backing up my local Related Work and review my parts against the instructor feedback. | `src/evaluate.py`, `app/app.py`, `report/sections/related_work.md` |
+| 2026-11-24 | Claude Code | Use three separate agents to check my parts for errors. | `src/`, `app/`, `report/sections/related_work.md` |
+| 2026-11-25 | Claude Code | Verify the remaining paper numbers against the sources. | `report/sections/related_work.md` |
+| 2026-11-25 | Claude Code | Run the final audit before pushing and fix what it finds. | All changed files |
