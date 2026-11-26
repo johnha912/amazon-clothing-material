@@ -26,6 +26,6 @@ Proposals go here first (Analyst), a human approves or edits them, then the Engi
 
 **Known limits.** The lexicon misses sarcasm and phrases it has no word for; "comfortable" can be about fit, not fabric; 20 reviews per product favors early reviews. Version 2 and the printed examples are how these get checked.
 
-**Approval.** Nguyen Ha: ☑ 2026-11-23 · Yanglin Hu: ☐ · Rui Song: ☑ 2026-11-25
+**Approval.** Nguyen Ha: ☑ 2026-11-23 · Yanglin Hu: ☑ 2026-11-25 · Rui Song: ☑ 2026-11-25
 
 **Audit verdict.** (Auditor appends here.)

@@ -93,3 +93,7 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-25 | Claude Code | Act on the fifth audit: drop the push-first route (the script must run on main when pushed), check every outgoing commit for changes to src/, and ask Rui before the upload. | Commit kit, report drafts for John, messages to Rui and John |
 | 2026-11-25 | Claude Code | Rui approved including his evaluator change in my push; record his approval and prepare the sixth Codex audit. | Commit message for Rui's change, sixth-pass Codex prompt |
 | 2026-11-25 | Codex | Sixth audit pass, read-only: Rui-approved evaluator change carried as its own commit, the commit kit, and the files from the fifth pass. | Sixth audit of the same files and the commit kit |
+| 2026-11-25 | Claude Code | Ask what is left for me on Issue #3; approve the Task C plan and push the approval. | `docs/feature-plan.md` approval line |
+| 2026-11-25 | Codex | Audit, read-only: the Task C approval diff and its commit message. | Task C approval line, commit message |
+| 2026-11-25 | Claude Code | Fix the audit finding: the commit message named a Codex row the prompt log did not have yet. | Commit message for the Task C approval |
+| 2026-11-25 | Codex | Re-audit, read-only: the Task C approval diff and the corrected commit message. | Task C approval line, commit message |
