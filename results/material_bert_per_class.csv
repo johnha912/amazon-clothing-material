@@ -1,41 +1,41 @@
-model,material,precision,recall,f1,support,n_predicted
-tfidf_logreg,cotton,0.8662,0.7624,0.811,5904,5196
-tfidf_logreg,leather,0.9415,0.9445,0.943,3188,3198
-tfidf_logreg,metal,0.136,0.6296,0.2237,27,125
-tfidf_logreg,nylon,0.4975,0.7225,0.5893,1110,1612
-tfidf_logreg,other,0.4505,0.6744,0.5402,688,1030
-tfidf_logreg,polyester,0.7976,0.612,0.6926,5807,4456
-tfidf_logreg,rayon,0.4276,0.7569,0.5465,975,1726
-tfidf_logreg,rubber,0.425,0.7969,0.5543,64,120
-tfidf_logreg,spandex,0.2653,0.4145,0.3236,386,603
-tfidf_logreg,wool,0.4802,0.716,0.5748,169,252
-tfidf_svm,cotton,0.8564,0.8283,0.8421,5904,5710
-tfidf_svm,leather,0.9369,0.9689,0.9527,3188,3297
-tfidf_svm,metal,0.1429,0.5556,0.2273,27,105
-tfidf_svm,nylon,0.6024,0.6757,0.6369,1110,1245
-tfidf_svm,other,0.5612,0.593,0.5767,688,727
-tfidf_svm,polyester,0.7897,0.7536,0.7712,5807,5541
-tfidf_svm,rayon,0.5536,0.6359,0.5919,975,1120
-tfidf_svm,rubber,0.6232,0.6719,0.6466,64,69
-tfidf_svm,spandex,0.3776,0.3316,0.3531,386,339
-tfidf_svm,wool,0.6121,0.5976,0.6048,169,165
-distilbert,cotton,0.8465,0.8501,0.8483,5904,5929
-distilbert,leather,0.9412,0.974,0.9573,3188,3299
-distilbert,metal,0.7333,0.4074,0.5238,27,15
-distilbert,nylon,0.7072,0.6135,0.657,1110,963
-distilbert,other,0.6009,0.5712,0.5857,688,654
-distilbert,polyester,0.7627,0.8194,0.79,5807,6238
-distilbert,rayon,0.6766,0.5579,0.6116,975,804
-distilbert,rubber,0.8,0.625,0.7018,64,50
-distilbert,spandex,0.6429,0.3964,0.4904,386,238
-distilbert,wool,0.6875,0.5207,0.5926,169,128
-distilbert_weighted,cotton,0.868,0.7988,0.832,5904,5433
-distilbert_weighted,leather,0.9484,0.9573,0.9529,3188,3218
-distilbert_weighted,metal,0.52,0.4815,0.5,27,25
-distilbert_weighted,nylon,0.5555,0.7261,0.6294,1110,1451
-distilbert_weighted,other,0.4968,0.6715,0.5711,688,930
-distilbert_weighted,polyester,0.7913,0.6955,0.7404,5807,5104
-distilbert_weighted,rayon,0.5153,0.7097,0.5971,975,1343
-distilbert_weighted,rubber,0.6667,0.7812,0.7194,64,75
-distilbert_weighted,spandex,0.4715,0.5777,0.5192,386,473
-distilbert_weighted,wool,0.4211,0.6627,0.5149,169,266
+model,material,precision,recall,f1,support,n_predicted,seed,data_version,command
+tfidf_logreg,cotton,0.8662,0.7624,0.811,5904,5196,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,leather,0.9415,0.9445,0.943,3188,3198,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,metal,0.136,0.6296,0.2237,27,125,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,nylon,0.4975,0.7225,0.5893,1110,1612,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,other,0.4505,0.6744,0.5402,688,1030,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,polyester,0.7976,0.612,0.6926,5807,4456,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,rayon,0.4276,0.7569,0.5465,975,1726,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,rubber,0.425,0.7969,0.5543,64,120,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,spandex,0.2653,0.4145,0.3236,386,603,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_logreg,wool,0.4802,0.716,0.5748,169,252,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,cotton,0.8564,0.8283,0.8421,5904,5710,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,leather,0.9369,0.9689,0.9527,3188,3297,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,metal,0.1429,0.5556,0.2273,27,105,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,nylon,0.6024,0.6757,0.6369,1110,1245,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,other,0.5612,0.593,0.5767,688,727,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,polyester,0.7897,0.7536,0.7712,5807,5541,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,rayon,0.5536,0.6359,0.5919,975,1120,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,rubber,0.6232,0.6719,0.6466,64,69,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,spandex,0.3776,0.3316,0.3531,386,339,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+tfidf_svm,wool,0.6121,0.5976,0.6048,169,165,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,cotton,0.8465,0.8501,0.8483,5904,5929,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,leather,0.9412,0.974,0.9573,3188,3299,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,metal,0.7333,0.4074,0.5238,27,15,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,nylon,0.7072,0.6135,0.657,1110,963,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,other,0.6009,0.5712,0.5857,688,654,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,polyester,0.7627,0.8194,0.79,5807,6238,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,rayon,0.6766,0.5579,0.6116,975,804,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,rubber,0.8,0.625,0.7018,64,50,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,spandex,0.6429,0.3964,0.4904,386,238,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert,wool,0.6875,0.5207,0.5926,169,128,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,cotton,0.868,0.7988,0.832,5904,5433,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,leather,0.9484,0.9573,0.9529,3188,3218,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,metal,0.52,0.4815,0.5,27,25,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,nylon,0.5555,0.7261,0.6294,1110,1451,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,other,0.4968,0.6715,0.5711,688,930,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,polyester,0.7913,0.6955,0.7404,5807,5104,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,rayon,0.5153,0.7097,0.5971,975,1343,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,rubber,0.6667,0.7812,0.7194,64,75,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,spandex,0.4715,0.5777,0.5192,386,473,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis
+distilbert_weighted,wool,0.4211,0.6627,0.5149,169,266,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --error-analysis

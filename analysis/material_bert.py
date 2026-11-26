@@ -7,7 +7,7 @@ runtime; never a CPU laptop):
 
     python analysis/material_bert.py --dry-run         # data and leakage checks only
     python analysis/material_bert.py --overwrite       # train, score, write results/
-    python analysis/material_bert.py --error-analysis  # rebuild the error files (CPU)
+    python analysis/material_bert.py --error-analysis  # rebuild the error files (CPU; --skip-png without Chrome)
     python analysis/material_bert.py --compare-only    # rebuild the comparison (CPU)
 
 Data: `data/sample.parquet` (249,762 rows, built by `src/make_sample.py`),
@@ -31,10 +31,13 @@ model predicts the untouched test split. The setting with the higher
 validation macro-F1 is the one the report leads with; both test scores are
 reported either way, so the choice never looks at test.
 
-Every score comes from `src/evaluate.py`: `material_scores` for macro-F1,
+Every score comes from `src/evaluate.py`: `material_scores` for macro-F1 and
+accuracy, `material_per_class` for per-class precision, recall and F1,
 `bootstrap_ci` for 95% intervals and `bootstrap_diff_ci` for paired gaps
 against the TF-IDF models on the same test rows (1,000 resamples, seed 42).
-Accuracy uses `sklearn.metrics.accuracy_score`, as in `material_tfidf.py`.
+(The 2026-11-25 training run computed accuracy with scikit-learn's
+`accuracy_score`, which `material_scores` wraps; `--compare-only` rescores
+every saved prediction through `src/evaluate.py` and refuses any mismatch.)
 
 Outputs in results/: material_bert.csv (one row per setting),
 material_bert_run.json, material_bert_predictions.csv (parent_asin, material,
@@ -65,13 +68,13 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from analysis.load_data import load_data  # noqa: E402
-from src.evaluate import bootstrap_ci, bootstrap_diff_ci, material_scores  # noqa: E402
+from src.evaluate import bootstrap_ci, bootstrap_diff_ci, material_per_class, material_scores  # noqa: E402
 
 SEED = 42
 N_RESAMPLES = 1000
@@ -104,6 +107,8 @@ def parse_args(argv=None):
     parser.add_argument("--learning-rate", type=float, default=2e-5)
     parser.add_argument("--revision", default="main", help="Pretrained model revision; resolved SHA is logged.")
     parser.add_argument("--overwrite", action="store_true", help="Explicitly replace an existing BERT run.")
+    parser.add_argument("--skip-png", action="store_true",
+                        help="With --error-analysis: write every file except the PNGs (no Chrome needed).")
     args = parser.parse_args(argv)
     if args.epochs < 1 or args.batch_size < 1 or not 1 <= args.max_length <= 512:
         parser.error("epochs/batch-size must be positive; max-length must be 1..512")
@@ -143,8 +148,17 @@ def prepare_task(df: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("parent_asin must be present and unique; ask the pipeline owner to deduplicate.")
     if df.split.isna().any() or not df.split.isin(["train", "test"]).all():
         raise ValueError("Expected the frozen split values train and test only.")
+    # Eligibility counts both splits, the same rule as material_tfidf.py, so both scripts score the
+    # same rows. Refuse to run if any class would qualify only because of its test rows.
     counts = df.material.value_counts()
     keep_classes = counts[counts >= MIN_CLASS_ROWS].index
+    train_counts = (
+        df
+        .loc[lambda d: d.split.eq("train"), "material"]
+        .value_counts()
+    )
+    if set(keep_classes) != set(train_counts[train_counts >= MIN_CLASS_ROWS].index):
+        raise ValueError("Class eligibility depends on test rows; agree a train-only rule with the team first.")
     task = (
         df
         .dropna(subset=["material"])
@@ -202,11 +216,9 @@ def git_value(*arguments):
 
 
 def scores_of(y_true, y_pred):
-    """Macro-F1 from the shared evaluator; accuracy computed as material_tfidf.py does."""
-    return {
-        "macro_f1": float(material_scores(y_true, y_pred)["macro_f1"]),
-        "accuracy": float(accuracy_score(y_true, y_pred)),
-    }
+    """Macro-F1 and accuracy, both from the shared evaluator src/evaluate.py."""
+    scores = material_scores(y_true, y_pred)
+    return {"macro_f1": float(scores["macro_f1"]), "accuracy": float(scores["accuracy"])}
 
 
 def balanced_weights(labels: pd.Series, classes):
@@ -250,7 +262,7 @@ def read_predictions(results_dir) -> pd.DataFrame:
 
 
 # %% Confidence intervals and the comparison with Nguyen's baselines
-def write_ci_table(results_dir, predictions) -> pd.DataFrame:
+def write_ci_table(results_dir, predictions, data_version) -> pd.DataFrame:
     """Bootstrap 95% CIs for DistilBERT and paired gaps against the other models."""
     rows = []
     for model in SETTINGS:
@@ -276,11 +288,11 @@ def write_ci_table(results_dir, predictions) -> pd.DataFrame:
             estimate=lambda d: d.estimate.round(4),
             ci_low=lambda d: d.ci_low.round(4),
             ci_high=lambda d: d.ci_high.round(4),
-            n_test=len(predictions), n_resamples=N_RESAMPLES, seed=SEED,
+            n_test=len(predictions), n_resamples=N_RESAMPLES, seed=SEED, data_version=data_version,
             command="python analysis/material_bert.py --compare-only",
         )
         .loc[:, ["model", "versus", "quantity", "estimate", "ci_low", "ci_high", "excludes_zero",
-                 "n_test", "n_resamples", "seed", "command"]]
+                 "n_test", "n_resamples", "seed", "data_version", "command"]]
     )
     table.to_csv(results_dir / "material_bert_ci.csv", index=False)
     return table
@@ -331,7 +343,7 @@ def write_comparison(results_dir):
         .sort_values("macro_f1", ascending=False)
     )
     comparison.to_csv(target, index=False)
-    ci_table = write_ci_table(results_dir, predictions)
+    ci_table = write_ci_table(results_dir, predictions, table.data_version.iloc[0])
     print(comparison.loc[:, ["model", "macro_f1", "macro_f1_ci_low", "macro_f1_ci_high", "accuracy"]]
           .to_string(index=False))
     print(ci_table.loc[lambda d: d.versus.ne(""), ["model", "versus", "estimate", "ci_low", "ci_high",
@@ -340,41 +352,63 @@ def write_comparison(results_dir):
 
 
 # %% Error analysis for the model note (docs/model-notes/material_bert.md)
-def per_class_table(frame, models, classes) -> pd.DataFrame:
-    """Per-class precision, recall and F1 for each model, long format."""
-    rows = []
-    for model in models:
-        report = classification_report(frame.material, frame[model], labels=classes,
-                                       output_dict=True, zero_division=0)
-        rows += [{"model": model, "material": name, "precision": report[name]["precision"],
-                  "recall": report[name]["recall"], "f1": report[name]["f1-score"],
-                  "support": int(report[name]["support"]),
-                  "n_predicted": int(frame[model].eq(name).sum())} for name in classes]
+def per_class_table(frame, models, classes, data_version) -> pd.DataFrame:
+    """Per-class precision, recall and F1 for each model (src/evaluate.material_per_class), long format."""
+    tables = [
+        material_per_class(frame.material, frame[model], classes)
+        .assign(model=model,
+                support=lambda d: d.support.astype(int),
+                n_predicted=lambda d: [int(frame[model].eq(name).sum()) for name in d.material])
+        for model in models
+    ]
     return (
-        pd.DataFrame(rows)
+        pd.concat(tables, ignore_index=True)
+        .loc[:, ["model", "material", "precision", "recall", "f1", "support", "n_predicted"]]
         .assign(precision=lambda d: d.precision.round(4), recall=lambda d: d.recall.round(4),
-                f1=lambda d: d.f1.round(4))
+                f1=lambda d: d.f1.round(4), seed=SEED, data_version=data_version,
+                command="python analysis/material_bert.py --error-analysis")
     )
+
+
+def names_word(word, text):
+    return bool(re.search(rf"\b{re.escape(word)}\b", text, flags=re.IGNORECASE))
 
 
 def fiber_word_split(frame, models) -> dict:
-    """Error rates with and without the true class's own fiber word in the cleaned text."""
+    """Error rates and counts with and without the true class's own fiber word in the cleaned text.
+
+    For listings that omit their own fiber word, also count errors whose text names one of the
+    other seven fiber words, to separate "names a different fiber" from "names none of them".
+    """
     named = (
         frame
         .loc[lambda d: d.material.isin(FIBER_WORD_CLASSES)]
-        .assign(has_word=lambda d: [bool(re.search(rf"\b{re.escape(label)}\b", text, flags=re.IGNORECASE))
-                                    for label, text in zip(d.material, d.text)])
+        .assign(
+            has_word=lambda d: [names_word(label, text) for label, text in zip(d.material, d.text)],
+            other_word=lambda d: [any(names_word(word, text) for word in FIBER_WORD_CLASSES if word != label)
+                                  for label, text in zip(d.material, d.text)],
+        )
     )
-    split = {"rows": len(named), "share_with_word": round(float(named.has_word.mean()), 4)}
+    split = {"rows": len(named), "share_with_word": round(float(named.has_word.mean()), 4),
+             "rows_with_word": int(named.has_word.sum()), "rows_without_word": int((~named.has_word).sum())}
     for model in models:
         wrong = named[model].ne(named.material)
-        split[model] = {"error_with_word": round(float(wrong[named.has_word].mean()), 4),
-                        "error_without_word": round(float(wrong[~named.has_word].mean()), 4)}
+        split[model] = {
+            "error_with_word": round(float(wrong[named.has_word].mean()), 4),
+            "error_without_word": round(float(wrong[~named.has_word].mean()), 4),
+            "errors_with_word": int((wrong & named.has_word).sum()),
+            "errors_without_word": int((wrong & ~named.has_word).sum()),
+            "errors_without_word_naming_other_fiber": int((wrong & ~named.has_word & named.other_word).sum()),
+            "errors_without_any_fiber_word": int((wrong & ~named.has_word & ~named.other_word).sum()),
+        }
     return split
 
 
-def write_reports(results_dir, task):
-    """Per-class scores, confusion matrices, errors and a JSON summary from saved predictions."""
+def write_reports(results_dir, task, data_version, skip_png=False):
+    """Per-class scores, confusion matrices, errors and a JSON summary from saved predictions.
+
+    PNG export needs kaleido's Chrome; skip_png writes every other file (for machines without it).
+    """
     import plotly.express as px
 
     predictions = read_predictions(results_dir)
@@ -393,9 +427,10 @@ def write_reports(results_dir, task):
         raise ValueError("Saved predictions carry different true labels from the loaded data.")
     classes = sorted(task.material.unique())
     models = [*TFIDF_MODELS, *SETTINGS]
-    per_class_table(frame, models, classes).to_csv(results_dir / "material_bert_per_class.csv", index=False)
+    per_class_table(frame, models, classes, data_version).to_csv(results_dir / "material_bert_per_class.csv",
+                                                                 index=False)
     summary = {"command": "python analysis/material_bert.py --error-analysis", "seed": SEED,
-               "n_test": len(frame), "models": {}}
+               "data_version": data_version, "n_test": len(frame), "models": {}}
     for model in SETTINGS:
         stem = "material_bert" if model == "distilbert" else "material_bert_weighted"
         matrix = confusion_matrix(frame.material, frame[model], labels=classes)
@@ -407,7 +442,8 @@ def write_reports(results_dir, task):
                            labels={"x": "predicted", "y": "true", "color": "count"},
                            title=f"{model}: confusion matrix (250k test split)")
         figure.write_html(results_dir / f"{stem}_confusion.html", include_plotlyjs="cdn")
-        figure.write_image(results_dir / f"{stem}_confusion.png", width=900, height=750, scale=2)
+        if not skip_png:
+            figure.write_image(results_dir / f"{stem}_confusion.png", width=900, height=750, scale=2)
         pairs = (
             frame
             .loc[lambda d: d[model].ne(d.material)]
@@ -517,7 +553,12 @@ def train_settings(args, task, version, fit, validation):
     class ListingDataset(torch.utils.data.Dataset):
         def __init__(self, frame):
             self.encodings = tokenizer(frame.text.tolist(), truncation=True, max_length=args.max_length)
-            self.labels = frame.material.map(label2id).tolist()
+            self.labels = (
+                frame
+                .material
+                .map(label2id)
+                .tolist()
+            )
 
         def __len__(self):
             return len(self.labels)
@@ -657,7 +698,7 @@ def train_settings(args, task, version, fit, validation):
         "git_commit": git_value("rev-parse", "HEAD"),
         "git_status": git_value("status", "--short"),
         "model_name": MODEL_NAME, "model_revision": resolved_revision,
-        "evaluator": "src.evaluate.material_scores (macro-F1); sklearn accuracy_score (accuracy)",
+        "evaluator": "src.evaluate.material_scores (macro-F1, accuracy)",
         "gpu": torch.cuda.get_device_name(0), "cuda": torch.version.cuda,
         "machine": platform.node(), "platform": platform.platform(),
         "started_utc": started_utc, "elapsed_seconds": round(time.perf_counter() - started, 2),
@@ -700,7 +741,7 @@ def train_settings(args, task, version, fit, validation):
     print(f"\nSelected by validation macro-F1: {selected}. Saved results/material_bert.csv, "
           "material_bert_predictions.csv and material_bert_run.json.")
     try:
-        write_reports(RESULTS_DIR, task)
+        write_reports(RESULTS_DIR, task, version)
         write_comparison(RESULTS_DIR)
     except ValueError as error:
         # Keep the valid BERT results even if Nguyen's baseline files are missing or stale.
@@ -723,7 +764,7 @@ def main(argv=None):
         .pipe(prepare_task)
     )
     if args.error_analysis:
-        write_reports(RESULTS_DIR, task)
+        write_reports(RESULTS_DIR, task, version, skip_png=args.skip_png)
         return
     train = (
         task

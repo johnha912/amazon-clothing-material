@@ -1,6 +1,7 @@
 {
   "command": "python analysis/material_bert.py --error-analysis",
   "seed": 42,
+  "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
   "n_test": 18318,
   "models": {
     "distilbert": {
@@ -97,21 +98,39 @@
   "fiber_word_split": {
     "rows": 17603,
     "share_with_word": 0.3079,
+    "rows_with_word": 5420,
+    "rows_without_word": 12183,
     "tfidf_logreg": {
       "error_with_word": 0.133,
-      "error_without_word": 0.3237
+      "error_without_word": 0.3237,
+      "errors_with_word": 721,
+      "errors_without_word": 3944,
+      "errors_without_word_naming_other_fiber": 640,
+      "errors_without_any_fiber_word": 3304
     },
     "tfidf_svm": {
       "error_with_word": 0.088,
-      "error_without_word": 0.2568
+      "error_without_word": 0.2568,
+      "errors_with_word": 477,
+      "errors_without_word": 3129,
+      "errors_without_word_naming_other_fiber": 517,
+      "errors_without_any_fiber_word": 2612
     },
     "distilbert": {
       "error_with_word": 0.0585,
-      "error_without_word": 0.2379
+      "error_without_word": 0.2379,
+      "errors_with_word": 317,
+      "errors_without_word": 2898,
+      "errors_without_word_naming_other_fiber": 520,
+      "errors_without_any_fiber_word": 2378
     },
     "distilbert_weighted": {
       "error_with_word": 0.0705,
-      "error_without_word": 0.2898
+      "error_without_word": 0.2898,
+      "errors_with_word": 382,
+      "errors_without_word": 3531,
+      "errors_without_word_naming_other_fiber": 606,
+      "errors_without_any_fiber_word": 2925
     }
   },
   "agreement_with_tfidf_svm": {

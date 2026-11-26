@@ -27,6 +27,17 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-10-27 | Claude Code | Write the Related Implementations section from three Kaggle notebooks on Amazon Reviews 2023. | `report/sections/related_implementations.md` |
 | 2026-10-27 | Claude Code | Commit and push the Status update and the Related Implementations section. | Git |
 | 2026-10-29 | Claude Code | Pull the latest repo and rewrite the README with the task overview, pilot results, setup, layout, roadmap, and team. | `README.md` |
+| 2026-11-02 | Codex | Implement my DistilBERT material-model contribution, save test macro-F1, and prepare comparison and shoe-scope coordination with Nguyen. | `analysis/material_bert.py` |
+| 2026-11-02 | Codex | Prepare a Colab-ready script because there is no existing project notebook. | DistilBERT Colab workflow |
+| 2026-11-02 | Codex | Explain the Colab missing-file error after cloning the repository and enabling the T4 GPU. | Colab script upload troubleshooting |
+| 2026-11-02 | Codex | Diagnose the Colab Trainer import failure caused by the torchvision nms operator and correct the text-model setup instructions. | Colab dependency troubleshooting |
+| 2026-11-02 | Codex | Fix the Colab pretrained-model revision check after successful weight downloads and explain how to retry training. | Model revision tracking and Colab retry |
+| 2026-11-02 | Codex | Read the completed Colab run and provide the remaining paste-ready cells to inspect, document and save the results. | Post-training Colab cells and model note |
+| 2026-11-02 | Codex | Clarify which helper file to choose in the Colab upload dialog. | Post-training helper file selection |
+| 2026-11-02 | Codex | Investigate the failed post-training helper cell shown in the Colab screenshot. | Post-training helper troubleshooting |
+| 2026-11-02 | Codex | Provide the backup-size TypeError traceback after the model note and prompt log were saved. | Backup download correction |
+| 2026-11-02 | Codex | Package all completed work into one ZIP in Downloads and write a PDF brief explaining my contribution, findings and requests for John/Nguyen and Rui. | Final handoff ZIP and PDF brief |
+| 2026-11-02 | Codex | Include the original CS6140stage1.ipynb downloaded from Colab in the handoff. | Original Colab notebook inclusion |
 | 2026-11-05 | Claude Code | Review the project state from memory and the repo. | Project status |
 | 2026-11-05 | Claude Code | Check the GitHub repo and Issue #1 for updates. | Issue #1 |
 | 2026-11-05 | Claude Code | Use subagents to find useful, verified papers for the project and list all candidates for review. | `report/sections/related_work.md` |
@@ -64,3 +75,21 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-24 | Claude Code | Use three separate agents to check my parts for errors. | `src/`, `app/`, `report/sections/related_work.md` |
 | 2026-11-25 | Claude Code | Verify the remaining paper numbers against the sources. | `report/sections/related_work.md` |
 | 2026-11-25 | Claude Code | Run the final audit before pushing and fix what it finds. | All changed files |
+| 2026-11-25 | Claude Code | Read the repo and do my Week 2 and Week 3 DistilBERT work (Issues #2 and #3). | `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, `results/material_bert*`, `results/material_comparison.csv`, `ai-prompts.md` |
+| 2026-11-25 | Claude Code | Ask what is still running. | DistilBERT 250k run status |
+| 2026-11-25 | Codex | Audit the uncommitted DistilBERT 250k changes against AGENTS.md, read-only, and report PASS or CHANGES REQUESTED. | Audit of `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, `results/material_bert*`, `ai-prompts.md` |
+| 2026-11-25 | Claude Code | Ask whether the work is ready to submit, given the Codex audit (changes requested), and fix the findings. | `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, `results/material_bert*` |
+| 2026-11-25 | Codex | Re-audit the fixes from the first audit, read-only, including the two-commit provenance plan and the handoff. | Second audit of the same files and the handoff |
+| 2026-11-25 | Claude Code | Fix the second audit's findings without committing or sending anything outside the local machine. | `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, `ai-prompts.md`, proposed `src/evaluate.py` change for Rui |
+| 2026-11-25 | Codex | Third audit pass, read-only: check the evaluator patch in an isolated copy, the fiber-word wording, the hyperparameter sources and the push guard. | Third audit of the same files, the handoff and the commit kit |
+| 2026-11-25 | Claude Code | Fix the third audit's push-check finding, write a status summary of what is done and what is still needed, and give step-by-step submission instructions without submitting anything. | Commit kit, handoff, `ai-prompts.md` |
+| 2026-11-25 | Claude Code | Ask to push the work with only my name on the commits, without an AI co-author line. | Commit messages in the commit kit |
+| 2026-11-25 | Claude Code | Push before Rui's evaluator change and hand it to Rui and John afterwards; give me the prompt for the next Codex audit. | `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, commit kit, follow-up patch for Rui |
+| 2026-11-25 | Claude Code | Share the fourth-pass Codex prompt as sent (no audit result yet). | Fourth Codex audit |
+| 2026-11-25 | Codex | Fourth audit pass, read-only: the push-first plan, the evaluator handoff patches, the note and the push kit. | Fourth audit of the same files and the commit kit |
+| 2026-11-25 | Claude Code | Fix the fourth audit's finding (the evaluator change must reach main with the push) without editing Rui's file. | `analysis/material_bert.py`, `docs/model-notes/material_bert.md`, commit kit |
+| 2026-11-25 | Claude Code | Push my part first, then message Rui and John with what I pushed and what they need to do; nothing to Rui before the upload. | Commit kit (push-first route and its commit message), report drafts for John, messages to Rui and John |
+| 2026-11-25 | Codex | Fifth audit pass, read-only: the push-first plan, its route in the commit kit, and the files from the fourth pass. | Fifth audit of the same files and the commit kit |
+| 2026-11-25 | Claude Code | Act on the fifth audit: drop the push-first route (the script must run on main when pushed), check every outgoing commit for changes to src/, and ask Rui before the upload. | Commit kit, report drafts for John, messages to Rui and John |
+| 2026-11-25 | Claude Code | Rui approved including his evaluator change in my push; record his approval and prepare the sixth Codex audit. | Commit message for Rui's change, sixth-pass Codex prompt |
+| 2026-11-25 | Codex | Sixth audit pass, read-only: Rui-approved evaluator change carried as its own commit, the commit kit, and the files from the fifth pass. | Sixth audit of the same files and the commit kit |

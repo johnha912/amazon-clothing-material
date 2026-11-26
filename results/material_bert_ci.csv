@@ -1,8 +1,8 @@
-model,versus,quantity,estimate,ci_low,ci_high,excludes_zero,n_test,n_resamples,seed,command
-distilbert,,macro_f1,0.6758,0.6512,0.6968,,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert_weighted,,macro_f1,0.6576,0.6365,0.6777,,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert,tfidf_logreg,macro_f1(model) - macro_f1(versus),0.096,0.0729,0.1186,yes,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert,tfidf_svm,macro_f1(model) - macro_f1(versus),0.0555,0.0325,0.0763,yes,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert_weighted,tfidf_logreg,macro_f1(model) - macro_f1(versus),0.0777,0.0588,0.0965,yes,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert_weighted,tfidf_svm,macro_f1(model) - macro_f1(versus),0.0373,0.0178,0.056,yes,18318,1000,42,python analysis/material_bert.py --compare-only
-distilbert_weighted,distilbert,macro_f1(model) - macro_f1(versus),-0.0182,-0.0343,-0.0018,yes,18318,1000,42,python analysis/material_bert.py --compare-only
+model,versus,quantity,estimate,ci_low,ci_high,excludes_zero,n_test,n_resamples,seed,data_version,command
+distilbert,,macro_f1,0.6758,0.6512,0.6968,,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert_weighted,,macro_f1,0.6576,0.6365,0.6777,,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert,tfidf_logreg,macro_f1(model) - macro_f1(versus),0.096,0.0729,0.1186,yes,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert,tfidf_svm,macro_f1(model) - macro_f1(versus),0.0555,0.0325,0.0763,yes,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert_weighted,tfidf_logreg,macro_f1(model) - macro_f1(versus),0.0777,0.0588,0.0965,yes,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert_weighted,tfidf_svm,macro_f1(model) - macro_f1(versus),0.0373,0.0178,0.056,yes,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
+distilbert_weighted,distilbert,macro_f1(model) - macro_f1(versus),-0.0182,-0.0343,-0.0018,yes,18318,1000,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",python analysis/material_bert.py --compare-only
