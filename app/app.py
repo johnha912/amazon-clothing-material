@@ -27,14 +27,14 @@ from load_data import strip_composition as strip_clauses  # noqa: E402  training
 from src.labels import label, strip_composition  # noqa: E402
 
 MODEL = ROOT / "models" / "material_tfidf.joblib"
-METRICS = ROOT / "results" / "material_tfidf.csv"
+METRICS = ROOT / "results" / "demo_model.csv"
 META_URL = ("https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/"
             "raw/meta_categories/meta_Clothing_Shoes_and_Jewelry.jsonl")
 SETUP = f"""pip install -r requirements.txt
 mkdir -p data
 curl -L {META_URL} -o data/meta_Clothing_Shoes_and_Jewelry.jsonl   # about 18 GB
 python -m src.make_sample data/meta_Clothing_Shoes_and_Jewelry.jsonl --n 250000   # a few minutes
-python analysis/material_tfidf.py   # about 1 to 6 minutes, writes models/material_tfidf.joblib"""
+python analysis/material_tfidf.py   # about 6 to 26 minutes, writes models/material_tfidf.joblib"""
 
 # Real listings from the 250k sample's test split (already cleaned, as the model sees them),
 # with the label parsed from each listing's original composition line. Four the model gets
@@ -71,13 +71,10 @@ def model_caption() -> str:
     """How the saved model scored, read from its results file so it never goes stale."""
     if not METRICS.exists():
         return ""
-    scores = pd.read_csv(METRICS).set_index("model")
-    row = scores.loc["tfidf_logreg"]
-    svm = (f" The linear SVM scores {scores.loc['tfidf_svm', 'macro_f1']:.3f} but gives no probabilities, "
-           "so the demo uses logistic regression." if "tfidf_svm" in scores.index else "")
-    return (f"TF-IDF + logistic regression, trained on {row.n_train:,} labeled listings; "
-            f"test macro-F1 {row.macro_f1:.3f} on {row.n_test:,} listings "
-            f"({row.data_version}, seed {row.seed}).{svm}")
+    row = pd.read_csv(METRICS).iloc[0]
+    return (f"TF-IDF + linear SVM with probabilities calibrated by a sigmoid, trained on {row.n_train:,} "
+            f"labeled listings; test macro-F1 {row.macro_f1:.3f} on {row.n_test:,} listings "
+            f"({row.data_version}, seed {row.seed}).")
 
 
 st.set_page_config(page_title="What is it made of?", page_icon="🧵")

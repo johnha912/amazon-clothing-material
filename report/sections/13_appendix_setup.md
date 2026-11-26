@@ -1,4 +1,4 @@
-# Appendix: Setup and reproduction
+# Appendix A: Setup and reproduction
 
 Everything below runs from a clean clone of the public repository, https://github.com/johnha912/amazon-clothing-material. Python 3.12 or later is required.
 
@@ -23,7 +23,7 @@ Run the analyses from the repository root, so that the shared evaluation in `src
 
 ```bash
 python analysis/eda.py               # exploratory charts into results/eda/
-python analysis/material_tfidf.py    # Task A: TF-IDF + logistic regression / SVM (CPU, ~6 min)
+python analysis/material_tfidf.py    # Task A: TF-IDF + logistic regression / SVM + calibrated demo SVM (CPU, ~6 to 26 min)
 python analysis/rating.py            # Task B: mean baseline, random forest, XGBoost (CPU, ~21 min)
 python analysis/review_sentiment.py  # Task C: lexicon sentiment (first run streams the
                                      # reviews file, ~13 min by console

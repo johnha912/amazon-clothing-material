@@ -17,8 +17,9 @@ Predictions are merged back onto the test rows by `parent_asin` and the
 merge is asserted one-to-one before anything is scored, so a prediction
 can never be silently paired with the wrong row. Writes
 `results/material_tfidf.csv` and `results/material_tfidf_predictions.csv`,
-and saves the logistic-regression pipeline to
-`models/material_tfidf.joblib` for the demo app.
+and saves a sigmoid-calibrated copy of the SVM pipeline to
+`models/material_tfidf.joblib` for the demo app (its own scores and its
+agreement with the reported SVM go to `results/demo_model.csv`).
 
 Data: `data/sample.parquet` when it exists (built by `src/make_sample.py`,
 Rui Song) — for Issue #2 that is the 249,762-row sample; until then the
@@ -38,8 +39,11 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
+from sklearn.base import clone
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (accuracy_score, classification_report,
                              confusion_matrix)
 from sklearn.pipeline import Pipeline
@@ -150,7 +154,31 @@ for name, model in models.items():
     if name == "tfidf_logreg":
         print(classification_report(frame.material, frame.predicted, digits=3))
 
-# %% Save metrics, per-row predictions, and the logreg pipeline for the demo app
+# %% Demo model: the same SVM pipeline, probability-calibrated (not a reported result)
+# Sigmoid calibration, 5-fold. ensemble=False keeps ONE final SVM fitted on all
+# training rows (the cross-validation only fits the sigmoid), so the demo is a
+# single model whose scores match the reported tfidf_svm, not an average of 5.
+demo = CalibratedClassifierCV(clone(models["tfidf_svm"]), method="sigmoid",
+                              cv=StratifiedKFold(5, shuffle=True, random_state=SEED),
+                              ensemble=False)
+demo.fit(train.text, train.material)
+demo_frame = attach_predictions(test, demo.predict(test.text))
+demo_scores = material_scores(demo_frame.material, demo_frame.predicted)
+agreement = float((demo_frame.predicted.to_numpy()
+                   == scored["tfidf_svm"].predicted.to_numpy()).mean())
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+pd.DataFrame([{"model": "tfidf_svm_calibrated",
+               "macro_f1": round(demo_scores["macro_f1"], 4),
+               "accuracy": round(demo_scores["accuracy"], 4),
+               "n_train": len(train), "n_test": len(test), "seed": SEED,
+               "data_version": DATA_VERSION,
+               "top1_agreement_with_tfidf_svm": round(agreement, 4),
+               "command": "python analysis/material_tfidf.py"}]
+             ).to_csv(RESULTS_DIR.joinpath("demo_model.csv"), index=False)
+print(f"\ndemo (calibrated SVM): macro-F1={demo_scores['macro_f1']:.4f}, "
+      f"accuracy={demo_scores['accuracy']:.4f}, top-1 agreement with tfidf_svm={agreement:.4f}")
+
+# %% Save metrics, per-row predictions, and the calibrated SVM for the demo app
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -165,7 +193,7 @@ predictions = (test
                        tfidf_svm=scored["tfidf_svm"].predicted.to_numpy()))
 predictions.to_csv(RESULTS_DIR / "material_tfidf_predictions.csv", index=False)
 
-joblib.dump(models["tfidf_logreg"], MODELS_DIR / "material_tfidf.joblib")
+joblib.dump(demo, MODELS_DIR / "material_tfidf.joblib")
 run_json = write_run_json(
     Path(__file__), DATA_VERSION, ["numpy", "pandas", "scikit-learn", "joblib"],
     n_train=len(train), n_test=len(test), n_classes=int(task_a.material.nunique()),

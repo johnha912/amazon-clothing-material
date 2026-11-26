@@ -108,7 +108,7 @@ DistilBERT weights and its Colab notebook are attached to the [`yanglin-distilbe
 ## Status
 
 - ✅ Week 1 ([Issue #1](https://github.com/johnha912/amazon-clothing-material/issues/1)): 250k sample, pilot models, Related Work and Related Implementations drafted
-- 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): TF-IDF and rating rerun on 250k done; DistilBERT 250k run done (2026-11-25); the 250k demo still open
+- 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): TF-IDF and rating rerun on 250k done; DistilBERT 250k run done (2026-11-25); 250k demo done
 - 🚧 Week 3 ([Issue #3](https://github.com/johnha912/amazon-clothing-material/issues/3)): Task C version 1 done; report sections for Task C next
 - 📝 Report (PDF, max 8 pages) and a 5 ± 1 minute recorded presentation with a demo, due **December 6, 2026, 11:55 PM EST**
 
