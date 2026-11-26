@@ -1,46 +1,128 @@
 {
-  "command": "python analysis/material_bert.py",
+  "command": "python analysis/material_bert.py --overwrite",
   "seed": 42,
-  "data_version": "data/meta_head.jsonl pilot (10,000 rows)",
-  "n_train": 3641,
-  "n_test": 903,
-  "n_classes": 9,
-  "n_selection_fit": 2912,
-  "n_validation": 729,
-  "best_epoch": 2,
-  "selection_macro_f1": 0.390213215417884,
-  "task_fingerprint": "2fbda68db0a8be27fda0a7fa31a7c48273f93cdc910613e75c156167d46b9d73",
-  "test_ids_sha256": "4a70e2f867a9991a146a57baf7b1b8445a405a9a20d3e215cc03f42121da31a3",
-  "source_sha256": "1029e8c3a06a97f4958712c8ac5e82875d247d7b07846c88d2c6e5bfa2103264",
-  "git_commit": "f6ea44a69d9c68bd833304b0f716fac9886c06de",
-  "git_status": "?? analysis/material_bert.py\n?? \"material-bert-colab (1).zip\"\n?? material-bert-colab-v2.zip\n?? material-bert-colab.zip",
+  "data_version": "data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",
+  "n_train": 72661,
+  "n_test": 18318,
+  "n_classes": 10,
+  "n_selection_fit": 58128,
+  "n_validation": 14533,
+  "selected_by_validation": "distilbert",
+  "task_fingerprint": "1acff37e81d3a3133935eac9446c13bb3369601e2370d86095df08d8de87e185",
+  "test_ids_sha256": "8cc141bcab2fc2dd5d346234a894bc7e88c72735f9133d1afef05eef3cafa850",
+  "share_longer_than_max_length": {
+    "train": 0.1924,
+    "test": 0.1955
+  },
+  "settings": {
+    "distilbert": {
+      "loss": "cross-entropy",
+      "class_weights": null,
+      "validation_history": [
+        {
+          "epoch": 1.0,
+          "macro_f1": 0.5881888092842402,
+          "accuracy": 0.7734122342255556,
+          "loss": 0.6552537679672241
+        },
+        {
+          "epoch": 2.0,
+          "macro_f1": 0.663500128736609,
+          "accuracy": 0.7886878139406868,
+          "loss": 0.6031243801116943
+        },
+        {
+          "epoch": 3.0,
+          "macro_f1": 0.6783903008730776,
+          "accuracy": 0.7966696483864308,
+          "loss": 0.6035045981407166
+        }
+      ],
+      "best_epoch": 3,
+      "selection_macro_f1": 0.6783903008730776,
+      "selection_seconds": 386.3,
+      "refit_and_predict_seconds": 452.8,
+      "test_scores": {
+        "macro_f1": 0.6758474625447094,
+        "accuracy": 0.8075117370892019
+      }
+    },
+    "distilbert_weighted": {
+      "loss": "class-weighted cross-entropy",
+      "class_weights": {
+        "cotton": 0.3011480437665782,
+        "leather": 0.577407819453274,
+        "metal": 58.1288,
+        "nylon": 1.6964977819285547,
+        "other": 2.64896099161502,
+        "polyester": 0.3201207154815402,
+        "rayon": 1.8996339869281045,
+        "rubber": 30.788559322033898,
+        "spandex": 4.8440666666666665,
+        "wool": 13.480705009276438
+      },
+      "validation_history": [
+        {
+          "epoch": 1.0,
+          "macro_f1": 0.5822835240529456,
+          "accuracy": 0.7172641574348035,
+          "loss": 0.9700167775154114
+        },
+        {
+          "epoch": 2.0,
+          "macro_f1": 0.6196940475224332,
+          "accuracy": 0.7348104314319136,
+          "loss": 0.8586341142654419
+        },
+        {
+          "epoch": 3.0,
+          "macro_f1": 0.6459518358774696,
+          "accuracy": 0.7594440239455034,
+          "loss": 0.8865893483161926
+        }
+      ],
+      "best_epoch": 3,
+      "selection_macro_f1": 0.6459518358774696,
+      "selection_seconds": 385.2,
+      "refit_and_predict_seconds": 463.2,
+      "test_scores": {
+        "macro_f1": 0.6576335430561402,
+        "accuracy": 0.7732831095097719
+      }
+    }
+  },
+  "source_sha256": "50af940d89ef86057f0daa9649707d10985f40ce2b8dfc15bfd62040b2335b86",
+  "git_commit": "f3f7a3e561bbc25ae195bd3de39ecccfc74abea5",
+  "git_status": "M ai-prompts.md\n M analysis/material_bert.py",
   "model_name": "distilbert/distilbert-base-uncased",
   "model_revision": "12040accade4e8a0f71eabdb258fecc2e7e948be",
-  "evaluator": "sklearn.metrics (shared src/evaluate.py not yet available)",
-  "gpu": "Tesla T4",
-  "machine": "76f7ae5ca266",
-  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
-  "started_utc": "2026-11-03T05:02:30.972831+00:00",
-  "elapsed_seconds": 110.43,
-  "scope": "shared sample including shoes; team scope decision pending",
+  "evaluator": "src.evaluate.material_scores (macro-F1); sklearn accuracy_score (accuracy)",
+  "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+  "cuda": "13.0",
+  "machine": "Elliot",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "started_utc": "2026-11-25T19:02:13.905249+00:00",
+  "elapsed_seconds": 1719.8,
+  "scope": "shoes in scope (team decision 2026-11-07, AGENTS.md)",
   "hyperparameters": {
     "download_pilot": false,
     "dry_run": false,
     "compare_only": false,
+    "error_analysis": false,
     "epochs": 3,
     "validation_size": 0.2,
     "batch_size": 16,
     "max_length": 256,
     "learning_rate": 2e-05,
     "revision": "main",
-    "evaluator": null,
-    "overwrite": false
+    "overwrite": true
   },
   "versions": {
+    "python": "3.13.14",
     "numpy": "2.5.4",
     "pandas": "3.0.6",
     "scikit-learn": "1.9.1",
-    "torch": "2.14.1",
+    "torch": "2.14.1+cu130",
     "transformers": "5.20.2",
     "accelerate": "1.15.0",
     "pyarrow": "26.0.0",

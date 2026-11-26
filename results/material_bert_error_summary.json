@@ -1,0 +1,133 @@
+{
+  "command": "python analysis/material_bert.py --error-analysis",
+  "seed": 42,
+  "n_test": 18318,
+  "models": {
+    "distilbert": {
+      "misclassified": 3526,
+      "top_confusions": [
+        {
+          "true": "cotton",
+          "predicted": "polyester",
+          "count": 641
+        },
+        {
+          "true": "polyester",
+          "predicted": "cotton",
+          "count": 580
+        },
+        {
+          "true": "nylon",
+          "predicted": "polyester",
+          "count": 304
+        },
+        {
+          "true": "rayon",
+          "predicted": "polyester",
+          "count": 272
+        },
+        {
+          "true": "polyester",
+          "predicted": "nylon",
+          "count": 179
+        },
+        {
+          "true": "spandex",
+          "predicted": "polyester",
+          "count": 126
+        },
+        {
+          "true": "polyester",
+          "predicted": "rayon",
+          "count": 125
+        },
+        {
+          "true": "rayon",
+          "predicted": "cotton",
+          "count": 112
+        }
+      ]
+    },
+    "distilbert_weighted": {
+      "misclassified": 4153,
+      "top_confusions": [
+        {
+          "true": "cotton",
+          "predicted": "polyester",
+          "count": 596
+        },
+        {
+          "true": "polyester",
+          "predicted": "cotton",
+          "count": 540
+        },
+        {
+          "true": "polyester",
+          "predicted": "nylon",
+          "count": 473
+        },
+        {
+          "true": "polyester",
+          "predicted": "rayon",
+          "count": 366
+        },
+        {
+          "true": "cotton",
+          "predicted": "rayon",
+          "count": 215
+        },
+        {
+          "true": "polyester",
+          "predicted": "other",
+          "count": 176
+        },
+        {
+          "true": "nylon",
+          "predicted": "polyester",
+          "count": 171
+        },
+        {
+          "true": "cotton",
+          "predicted": "other",
+          "count": 147
+        }
+      ]
+    }
+  },
+  "fiber_word_split": {
+    "rows": 17603,
+    "share_with_word": 0.3079,
+    "tfidf_logreg": {
+      "error_with_word": 0.133,
+      "error_without_word": 0.3237
+    },
+    "tfidf_svm": {
+      "error_with_word": 0.088,
+      "error_without_word": 0.2568
+    },
+    "distilbert": {
+      "error_with_word": 0.0585,
+      "error_without_word": 0.2379
+    },
+    "distilbert_weighted": {
+      "error_with_word": 0.0705,
+      "error_without_word": 0.2898
+    }
+  },
+  "agreement_with_tfidf_svm": {
+    "distilbert": {
+      "same_prediction": 15041,
+      "both_right": 13289,
+      "only_bert_right": 1503,
+      "only_svm_right": 1131,
+      "both_wrong": 2395
+    },
+    "distilbert_weighted": {
+      "same_prediction": 14601,
+      "both_right": 12824,
+      "only_bert_right": 1341,
+      "only_svm_right": 1596,
+      "both_wrong": 2557
+    }
+  }
+}
