@@ -251,10 +251,14 @@ def make_model(name: str) -> Pipeline:
 train = task_c.query("split == 'train'")
 test = task_c.query("split == 'test'")
 rows = []
+predictions = test[["parent_asin", "material_sentiment"]].reset_index(drop=True)
 for target_name in ["material_sentiment", "average_rating"]:
     for name in ["mean_baseline", "xgboost"]:
         model = make_model(name).fit(train[LISTING_FEATURES], train[target_name])
-        scores = rating_scores(test[target_name], model.predict(test[LISTING_FEATURES]))
+        pred = model.predict(test[LISTING_FEATURES])
+        if target_name == "material_sentiment":
+            predictions[name] = pred
+        scores = rating_scores(test[target_name], pred)
         rows.append({"target": target_name, "model": name,
                      "rmse": round(scores["rmse"], 4), "mae": round(scores["mae"], 4),
                      "n_train": len(train), "n_test": len(test),
@@ -268,6 +272,7 @@ print("\n" + results[["target", "model", "rmse", "mae", "rmse_vs_baseline"]].to_
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 results.to_csv(RESULTS_DIR / "review_sentiment.csv", index=False)
+predictions.to_csv(RESULTS_DIR / "review_sentiment_predictions.csv", index=False)
 by_material.to_csv(RESULTS_DIR / "review_sentiment_by_material.csv")
 lexicon_check.to_csv(RESULTS_DIR / "review_sentiment_lexicon_check.csv")
 noise_examples.to_csv(RESULTS_DIR / "review_sentiment_noise_examples.csv", index=False)

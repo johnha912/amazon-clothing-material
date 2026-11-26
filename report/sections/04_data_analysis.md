@@ -40,7 +40,7 @@ flowchart LR
     hf -- "reviews file, streamed" --> sent
     sample -- "product ids + split" --> sent
     tfidf -- "predictions" --> evaluate
-    bert -- "predictions (250k run pending)" --> evaluate
+    bert -- "predictions" --> evaluate
     rating -- "predictions" --> evaluate
     sent -- "scores + checks" --> evaluate
     evaluate -- "scores on test split" --> results
@@ -50,7 +50,7 @@ flowchart LR
     results -- "merged tables" --> report
 ```
 
-*Figure: Project pipeline, from raw metadata to merged outputs. Every arrow is a step already run except the DistilBERT track, whose 250k run is pending; numbers come from `data/sample.parquet` (249,762 rows) scored through `src/evaluate.py`, and the 10k pilot path serves only pilot findings labeled as such (source: `report/assets/project-pipeline.mmd`).*
+*Figure: Project pipeline, from raw metadata to merged outputs. Every arrow is a step already run, including the DistilBERT 250k run on a GPU; numbers come from `data/sample.parquet` (249,762 rows) scored through `src/evaluate.py`, and the 10k pilot path serves only pilot findings labeled as such (source: `report/assets/project-pipeline.mmd`).*
 
 We use the product metadata of the Clothing, Shoes and Jewelry category of Amazon Reviews 2023 (Hou et al.). All numbers here come from `data/sample.parquet` (249,762 rows, `make_sample.py` 2219c1e, seed 42) and were computed with `python analysis/eda.py` and short pandas commands on the output of `analysis/load_data.py` (our arithmetic).
 

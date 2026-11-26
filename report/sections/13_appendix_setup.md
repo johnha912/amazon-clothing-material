@@ -31,13 +31,13 @@ python analysis/review_sentiment.py  # Task C: lexicon sentiment (first run stre
                                      # data/reviews_sample.parquet; a rerun takes ~8 min)
 ```
 
-Confidence intervals are computed from the saved prediction files, without retraining, once the shared bootstrap helper has landed in `src/evaluate.py`:
+Confidence intervals are computed from the saved prediction files, without retraining, with the shared bootstrap helper in `src/evaluate.py` (1,000 resamples, seed 42):
 
 ```bash
 python analysis/ci_from_predictions.py
 ```
 
-Two runs need a GPU and are not part of the CPU reproduction above. The DistilBERT fine-tune (`python analysis/material_bert.py`) runs on a GPU or in Colab, never on a CPU laptop, and ships with its own run note. The Task C version-2 check (DistilBERT fine-tuned on SST-2 over the 209,830 material sentences) (`analysis/taskc_sst2_agreement.py`) runs as a Kaggle notebook on a GPU, reading `data/reviews_sample.parquet` uploaded as a private Kaggle dataset; it reported 85.3% agreement with the lexicon (Cohen's kappa 0.617) on the 146,981 polar sentences, and its agreement tables are saved as `results/taskc_sst2_agreement.csv` and `results/taskc_sst2_by_rating.csv`.
+Two runs need a GPU and are not part of the CPU reproduction above. The DistilBERT fine-tune (`python analysis/material_bert.py --overwrite`, seed 42, the same 249,762-row sample) runs on a GPU or in Colab, never on a CPU laptop; we ran it on one NVIDIA GeForce RTX 5090 Laptop GPU (24 GB) with torch 2.14.1 for CUDA 13.0, where tokenizing, training, and predicting both settings took 1,719.8 s (about 28.7 min, timed after the data were loaded). The confidence intervals and the four-model comparison come from `python analysis/material_bert.py --compare-only`, and the run note is `docs/model-notes/material_bert.md`. The Task C version-2 check (DistilBERT fine-tuned on SST-2 over the 209,830 material sentences) (`analysis/taskc_sst2_agreement.py`) runs as a Kaggle notebook on a GPU, reading `data/reviews_sample.parquet` uploaded as a private Kaggle dataset; it reported 85.3% agreement with the lexicon (Cohen's kappa 0.617) on the 146,981 polar sentences, and its agreement tables are saved as `results/taskc_sst2_agreement.csv` and `results/taskc_sst2_by_rating.csv`.
 
 Run the demo from the repository root:
 
@@ -45,4 +45,4 @@ Run the demo from the repository root:
 streamlit run app/app.py
 ```
 
-The demo loads the saved Task A pipeline from `models/` (created by `analysis/material_tfidf.py`; the folder is not committed, so run that script first on a fresh clone).
+The demo loads the saved Task A pipeline from `models/` (created by `analysis/material_tfidf.py`; the folder is not committed). On a fresh clone, work through the steps above in order before starting the demo: download the data, build the sample with `make_sample`, then run `analysis/material_tfidf.py` to train and save the pipeline the demo loads.

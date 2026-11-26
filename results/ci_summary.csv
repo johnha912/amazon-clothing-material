@@ -1,0 +1,20 @@
+model,versus,metric,ci_low,ci_high,n_test,n_resamples,seed,source_file,command,excludes_zero
+tfidf_logreg,,macro_f1,0.5648,0.5957,18318,1000,42,material_tfidf_predictions.csv,python analysis/ci_from_predictions.py,
+tfidf_svm,,macro_f1,0.6027,0.6359,18318,1000,42,material_tfidf_predictions.csv,python analysis/ci_from_predictions.py,
+mean_baseline,,rmse,0.4908,0.5001,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+random_forest,,rmse,0.4998,0.5088,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+xgboost,,rmse,0.4715,0.4808,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+mean_baseline,,mae,0.3784,0.3849,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+random_forest,,mae,0.3822,0.3884,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+xgboost,,mae,0.3588,0.3651,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,
+mean_baseline,,rmse,0.2715,0.2874,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,
+xgboost,,rmse,0.2732,0.2894,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,
+mean_baseline,,mae,0.2219,0.2332,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,
+xgboost,,mae,0.2203,0.2323,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,
+tfidf_svm,tfidf_logreg,macro_f1,0.0294,0.0515,18318,1000,42,material_tfidf_predictions.csv,python analysis/ci_from_predictions.py,True
+xgboost,mean_baseline,rmse,-0.0208,-0.018,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,True
+xgboost,mean_baseline,mae,-0.021,-0.0184,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,True
+random_forest,mean_baseline,rmse,0.0065,0.0115,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,True
+random_forest,mean_baseline,mae,0.0014,0.0059,34836,1000,42,rating_predictions.csv,python analysis/ci_from_predictions.py,True
+xgboost,mean_baseline,rmse,-0.0008,0.0045,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,False
+xgboost,mean_baseline,mae,-0.0036,0.0014,3093,1000,42,review_sentiment_predictions.csv,python analysis/ci_from_predictions.py,False

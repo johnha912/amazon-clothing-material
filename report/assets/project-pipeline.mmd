@@ -37,7 +37,7 @@ flowchart LR
     hf -- "reviews file, streamed" --> sent
     sample -- "product ids + split" --> sent
     tfidf -- "predictions" --> evaluate
-    bert -- "predictions (250k run pending)" --> evaluate
+    bert -- "predictions" --> evaluate
     rating -- "predictions" --> evaluate
     sent -- "scores + checks" --> evaluate
     evaluate -- "scores on test split" --> results
