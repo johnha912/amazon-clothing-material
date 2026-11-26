@@ -1,0 +1,2 @@
+model,macro_f1,accuracy,n_train,n_test,seed,data_version,top1_agreement_with_tfidf_svm,command
+tfidf_svm_calibrated,0.643,0.7976,72661,18318,42,"data/sample.parquet (249,762 rows, make_sample.py 2219c1e)",0.9246,python analysis/material_tfidf.py

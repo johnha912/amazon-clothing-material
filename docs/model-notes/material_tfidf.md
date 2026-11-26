@@ -1,6 +1,6 @@
 # Model note — TF-IDF material classifiers (Task A)
 
-_Owner: Nguyen Ha · Role: Modeling · Script: `analysis/material_tfidf.py` · Status: numbers on the ~250k sample (`data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, seed 42), scored through `src/evaluate.py` on the untouched test split; confidence intervals pending. Figures from the earlier 10,000-record pilot are labeled as pilot._
+_Owner: Nguyen Ha · Role: Modeling · Script: `analysis/material_tfidf.py` · Status: numbers on the ~250k sample (`data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, seed 42), scored through `src/evaluate.py` on the untouched test split; 95% bootstrap intervals from `python analysis/ci_from_predictions.py` (`results/ci_summary.csv`, 1,000 resamples, seed 42). Figures from the earlier 10,000-record pilot are labeled as pilot._
 
 ## How the models work
 
@@ -24,8 +24,8 @@ Listing text is short, formulaic, and keyword-driven: sellers name the fabric, t
 
 | Model | Macro-F1 | Accuracy | 95% CI of macro-F1 |
 |---|---|---|---|
-| TF-IDF + logistic regression | 0.5799 | 0.7326 | pending |
-| TF-IDF + linear SVM | 0.6203 | 0.7872 | pending |
+| TF-IDF + logistic regression | 0.5799 | 0.7326 | 0.5648–0.5957 |
+| TF-IDF + linear SVM | 0.6203 | 0.7872 | 0.6027–0.6359 |
 
 Train 72,661 / test 18,318 listings. Command `python analysis/material_tfidf.py`, seed 42, data version `data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, scored through `src/evaluate.py`, on the cleaned text from `analysis/load_data.py`. The SVM is higher than logistic regression on both metrics and on every class on this test set (checked against `results/material_tfidf_predictions.csv`; for metal the F1 difference is only 0.004); confidence intervals will be computed from that file once the shared bootstrap helper lands. Per-class detail is in `results/material_tfidf_per_class.csv` (logistic regression), the confusion matrix in `results/material_tfidf_confusion.csv` (plot: `results/material_tfidf_confusion.png`), and every logistic-regression error in `results/material_tfidf_errors.csv`. The class list now comes from the shared `src/labels.py` (cotton, polyester, leather, nylon, rayon, other, spandex, wool, rubber, metal); every class has at least `MIN_CLASS_ROWS = 20` labeled rows, so none is dropped. The pilot (first 10,000 records, nine classes, 903 test rows) scored 0.5572 for logistic regression and 0.5239 for the SVM; those numbers are not comparable with the 250k ones.
 

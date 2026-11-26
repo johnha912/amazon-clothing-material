@@ -6,7 +6,13 @@ Henning, Sophie, William Beluch, Alexander Fraser, and Annemarie Friedrich. "A S
 
 Hou, Yupeng, Jiacheng Li, Zhankui He, An Yan, Xiusi Chen, and Julian McAuley. "Bridging Language and Items for Retrieval and Recommendation." *arXiv preprint* arXiv:2403.03952, 2024. https://arxiv.org/abs/2403.03952v1
 
+Hu, Minqing, and Bing Liu. "Mining and Summarizing Customer Reviews." *Proceedings of the Tenth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '04)*, ACM, 2004, pp. 168–177. https://doi.org/10.1145/1014052.1014073
+
+Hu, Nan, Jie Zhang, and Paul A. Pavlou. "Overcoming the J-Shaped Distribution of Product Reviews." *Communications of the ACM*, vol. 52, no. 10, 2009, pp. 144–147. https://doi.org/10.1145/1562764.1562800
+
 Joulin, Armand, Edouard Grave, Piotr Bojanowski, and Tomas Mikolov. "Bag of Tricks for Efficient Text Classification." *Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 2, Short Papers*, ACL, 2017, pp. 427–431. https://aclanthology.org/E17-2068/
+
+Kaufman, Shachar, Saharon Rosset, and Claudia Perlich. "Leakage in Data Mining: Formulation, Detection, and Avoidance." *Proceedings of the 17th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, ACM, 2011, pp. 556–563. https://doi.org/10.1145/2020408.2020496
 
 Lin, Yiu-Chang, Pradipto Das, and Ankur Datta. "Overview of the SIGIR 2018 eCom Rakuten Data Challenge." *The SIGIR 2018 Workshop on eCommerce (eCom 2018)*, CEUR Workshop Proceedings, vol. 2319, 2018. https://ceur-ws.org/Vol-2319/ecom18DC_paper_13.pdf
 
@@ -27,3 +33,5 @@ Wang, Sida, and Christopher D. Manning. "Baselines and Bigrams: Simple, Good Sen
 Yang, Li, Qifan Wang, Zac Yu, Anand Kulkarni, Sumit Sanghai, Bin Shu, Jon Elsas, and Bhargav Kanagal. "MAVE: A Product Dataset for Multi-source Attribute Value Extraction." *Proceedings of the 15th ACM International Conference on Web Search and Data Mining (WSDM '22)*, ACM, 2022, pp. 1256–1265. https://doi.org/10.1145/3488560.3498377 (preprint: https://arxiv.org/abs/2112.08663)
 
 Zheng, Guineng, Subhabrata Mukherjee, Xin Luna Dong, and Feifei Li. "OpenTag: Open Attribute Value Extraction from Product Profiles." *Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '18)*, ACM, 2018, pp. 1049–1058. https://doi.org/10.1145/3219819.3219839 (preprint: https://arxiv.org/abs/1806.01264)
+
+Zou, Henry Peng, Vinay Samuel, Yue Zhou, Weizhi Zhang, Liancheng Fang, Zihe Song, Philip S. Yu, and Cornelia Caragea. "ImplicitAVE: An Open-Source Dataset and Multimodal LLMs Benchmark for Implicit Attribute Value Extraction." *Findings of the Association for Computational Linguistics: ACL 2024*, ACL, 2024. https://arxiv.org/abs/2404.15592

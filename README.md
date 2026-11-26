@@ -28,17 +28,18 @@ Labels are extracted, not given: a label is the highest-percentage fiber in a co
 
 ## Results (250k sample, test split)
 
-All numbers: `data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, seed 42, scored through `src/evaluate.py`. 95% confidence intervals are pending the shared bootstrap helper. Each model has a note in [`docs/model-notes/`](docs/model-notes/) (method, rationale, error analysis with real examples); run provenance is in `results/*_run.json`.
+All numbers: `data/sample.parquet (249,762 rows, make_sample.py 2219c1e)`, seed 42, scored through `src/evaluate.py`. 95% confidence intervals (1,000 resamples, seed 42) are in `results/ci_summary.csv` (`python analysis/ci_from_predictions.py`) and, for DistilBERT, `results/material_bert_ci.csv`. Each model has a note in [`docs/model-notes/`](docs/model-notes/) (method, rationale, error analysis with real examples); run provenance is in `results/*_run.json`.
 
 **Task A — Material** (`python analysis/material_tfidf.py`)
 
 | Model | Macro-F1 | Accuracy |
 |---|---|---|
 | TF-IDF + logistic regression | 0.5799 | 0.7326 |
-| TF-IDF + linear SVM | **0.6203** | **0.7872** |
-| DistilBERT (fine-tuned) | 250k run pending | |
+| TF-IDF + linear SVM | 0.6203 | 0.7872 |
+| DistilBERT, unweighted (`python analysis/material_bert.py --overwrite`, GPU) | **0.6758** | **0.8075** |
+| DistilBERT, class-weighted | 0.6576 | 0.7733 |
 
-Leather is nearly solved (F1 0.943 for logistic regression); metal (0.224, 27 test rows) and spandex (0.324) are hardest, and polyester is most often confused with rayon, nylon, and cotton. DistilBERT has only a pilot score (0.3563 on 903 pilot rows), not comparable with this table.
+Leather is nearly solved (F1 0.943 for logistic regression); metal (0.224, 27 test rows) and spandex (0.324) are hardest, and polyester is most often confused with rayon, nylon, and cotton. DistilBERT (unweighted, chosen on validation macro-F1 before the test scores) is 0.0555 above the SVM in macro-F1 (paired 95% CI 0.0325 to 0.0763, excludes 0; CIs 0.6512–0.6968 DistilBERT, 0.6027–0.6359 SVM, from `--compare-only`), at a 1,719.8 s GPU run for its two settings (RTX 5090 Laptop GPU); the weighted run is 0.0182 lower than the unweighted one (−0.0343 to −0.0018), one seed each. Details: [`docs/model-notes/material_bert.md`](docs/model-notes/material_bert.md). The old pilot score (0.3563 on 903 pilot rows) is not comparable.
 
 **Task B — Rating** (`python analysis/rating.py`)
 
@@ -48,7 +49,7 @@ Leather is nearly solved (F1 0.943 for logistic regression); metal (0.224, 27 te
 | Random forest | 0.5044 | 0.3853 |
 | XGBoost | **0.4761** | **0.3620** |
 
-Only products with at least 5 ratings are kept (138,355 train / 34,836 test; seed 42), so these numbers are not comparable with the earlier unfiltered run (0.7512 / 0.7647 / 0.7373). Listing features beat the mean modestly (XGBoost is 3.9% lower in RMSE, our arithmetic; confidence intervals pending), and the hardest group is listings whose material could not be parsed (RMSE 0.4984).
+Only products with at least 5 ratings are kept (138,355 train / 34,836 test; seed 42), so these numbers are not comparable with the earlier unfiltered run (0.7512 / 0.7647 / 0.7373). Listing features beat the mean modestly (XGBoost is 3.9% lower in RMSE, our arithmetic; RMSE 95% CI 0.4715–0.4808 against 0.4908–0.5001 for the baseline, paired difference −0.0208 to −0.0180), and the hardest group is listings whose material could not be parsed (RMSE 0.4984).
 
 **Task C — Material sentiment** (`python analysis/review_sentiment.py`, lexicon version 1)
 
@@ -59,7 +60,7 @@ Up to 20 reviews per product (866,008 reviews) are split into sentences; 209,830
 | Material sentiment | 0.2795 | 0.2815 | +0.7% |
 | Star average | 0.4695 | 0.4487 | −4.4% |
 
-Listing fields say something about the overall rating but little about how the fabric feels (confidence intervals pending).
+Listing fields say something about the overall rating but little about how the fabric feels: the paired interval for XGBoost minus baseline RMSE, −0.0008 to +0.0045, includes zero, so the two do not differ measurably on material sentiment.
 
 ## Getting started
 
@@ -107,7 +108,7 @@ DistilBERT weights and its Colab notebook are attached to the [`yanglin-distilbe
 ## Status
 
 - ✅ Week 1 ([Issue #1](https://github.com/johnha912/amazon-clothing-material/issues/1)): 250k sample, pilot models, Related Work and Related Implementations drafted
-- 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): TF-IDF and rating rerun on 250k done; DistilBERT 250k run, confidence intervals, and the 250k demo still open
+- 🚧 Week 2 ([Issue #2](https://github.com/johnha912/amazon-clothing-material/issues/2)): TF-IDF and rating rerun on 250k done; DistilBERT 250k run done (2026-11-25); 250k demo done
 - 🚧 Week 3 ([Issue #3](https://github.com/johnha912/amazon-clothing-material/issues/3)): Task C version 1 done; report sections for Task C next
 - 📝 Report (PDF, max 8 pages) and a 5 ± 1 minute recorded presentation with a demo, due **December 6, 2026, 11:55 PM EST**
 

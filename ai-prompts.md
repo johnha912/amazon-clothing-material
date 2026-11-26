@@ -97,3 +97,13 @@ Every prompt sent to any AI tool for this project, in the order used. The report
 | 2026-11-25 | Codex | Audit, read-only: the Task C approval diff and its commit message. | Task C approval line, commit message |
 | 2026-11-25 | Claude Code | Fix the audit finding: the commit message named a Codex row the prompt log did not have yet. | Commit message for the Task C approval |
 | 2026-11-25 | Codex | Re-audit, read-only: the Task C approval diff and the corrected commit message. | Task C approval line, commit message |
+| 2026-11-25 | Claude Code | Audit the repo after the latest teammate updates and report whether it is ready for the slides. | Repo audit, Issues #2 and #3 |
+| 2026-11-25 | Claude Code | Audit which code and pushes are still missing. | Repo audit |
+| 2026-11-25 | Claude Code | Fix the bugs found in the audit: add the missing paired and Task C confidence intervals and update the report with the DistilBERT 250k results. | `analysis/ci_from_predictions.py`, `analysis/review_sentiment.py`, `results/`, `report/sections/`, `README.md`, `AGENTS.md` |
+| 2026-11-25 | Claude Code | Improve the efficiency of the coding tasks. | Coding workflow |
+| 2026-11-25 | Claude Code | Continue the bug fixes. | Same files |
+| 2026-11-26 | Claude Code | Commit the audited fixes, trim the report to the 8-page limit, and log the prompts. | Git, `report/sections/`, `ai-prompts.md` |
+| 2026-11-26 | Claude Code | Run the demo locally for a check. | `app/app.py` |
+| 2026-11-26 | Claude Code | Switch the demo to a calibrated linear SVM and check the report against the proposal's methods. | `analysis/material_tfidf.py`, `app/app.py`, `results/demo_model.csv`, `report/sections/` |
+| 2026-11-26 | Claude Code | Compare the new demo model with the old one. | `results/demo_model.csv` |
+| 2026-11-26 | Claude Code | Push the work to a separate branch for team review before merging into main. | Git |

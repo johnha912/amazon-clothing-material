@@ -97,12 +97,12 @@
       "clf__verbose": 0
     }
   },
-  "source_sha256": "1cb6a977dce9fb94514f0947ef00dee500ebe955c6a39daa2f41fd82d465909b",
-  "git_commit": "7c9e53f4591a296208ad707b50626d4e6f46d283",
-  "git_status": "M ai-prompts.md\n M analysis/load_data.py\n M analysis/material_tfidf.py\n M analysis/rating.py",
+  "source_sha256": "0e0d90e99e59e07b295935d4257bf8d6da060c539b25bb367a3bf4957ff991c1",
+  "git_commit": "dbebedd7db0142153bf42497a13158c3b5338337",
+  "git_status": "M README.md\n M ai-prompts.md\n M analysis/material_tfidf.py\n M app/app.py\n M docs/model-notes/material_tfidf.md\n M report/sections/01_introduction.md\n M report/sections/04_data_analysis.md\n M report/sections/05_methods.md\n M report/sections/06_experimental_setup.md\n M report/sections/07_results.md\n M report/sections/08_analysis.md\n M report/sections/09_discussion.md\n M report/sections/10_conclusion.md\n M report/sections/12_contributions_ai_usage.md\n M report/sections/13_appendix_setup.md\n M report/sections/related_implementations.md\n M results/material_tfidf_run.json\n?? report/sections/14_appendix_details.md\n?? results/demo_model.csv",
   "platform": "Windows-11-10.0.26300-SP0",
-  "started_utc": "2026-11-17T02:45:01.470827+00:00",
-  "elapsed_seconds": 353.95,
+  "started_utc": "2026-11-26T08:58:11.319634+00:00",
+  "elapsed_seconds": 1536.84,
   "versions": {
     "python": "3.14.3",
     "numpy": "2.5.3",
