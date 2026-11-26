@@ -1,6 +1,7 @@
 """The shared metrics entry point. Every number in results/ and report/ comes from here.
 
-Point scores: material_scores (macro-F1), rating_scores (RMSE, MAE).
+Point scores: material_scores (macro-F1, accuracy), material_per_class (precision,
+recall, F1 and support for each class), rating_scores (RMSE, MAE).
 Uncertainty: bootstrap_ci gives a 95% interval for one model's score, and
 bootstrap_diff_ci gives one for the gap between two models scored on the same
 test rows. Both resample test rows with replacement (1,000 times, seed 42 by
@@ -12,7 +13,8 @@ with another seed or another training sample.
 """
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score, mean_absolute_error, root_mean_squared_error
+from sklearn.metrics import (accuracy_score, f1_score, mean_absolute_error,
+                             precision_recall_fscore_support, root_mean_squared_error)
 from sklearn.utils.multiclass import unique_labels
 
 SEED = 42
@@ -28,7 +30,22 @@ def _macro_f1(y_true, y_pred):
 
 
 def material_scores(y_true, y_pred):
-    return {"macro_f1": _macro_f1(y_true, y_pred)}
+    return {"macro_f1": _macro_f1(y_true, y_pred),
+            "accuracy": accuracy_score(y_true, y_pred)}
+
+
+def material_per_class(y_true, y_pred, labels):
+    """Precision, recall, F1 and support for each class in labels, one row per class.
+
+    The same numbers as sklearn's classification_report(..., zero_division=0): a class that is
+    never predicted gets precision 0 instead of a warning. Accuracy and per-class scores have no
+    bootstrap here; bootstrap_ci still covers only macro_f1, rmse and mae.
+    """
+    labels = list(labels)
+    precision, recall, f1, support = precision_recall_fscore_support(
+        y_true, y_pred, labels=labels, zero_division=0)
+    return pd.DataFrame({"material": labels, "precision": precision, "recall": recall,
+                         "f1": f1, "support": support})
 
 
 def rating_scores(y_true, y_pred):

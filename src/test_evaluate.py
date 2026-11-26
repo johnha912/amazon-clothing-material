@@ -1,9 +1,10 @@
 """Tests for src/evaluate.py. Run from the repo root: python -m src.test_evaluate"""
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 
-from src.evaluate import bootstrap_ci, bootstrap_diff_ci, material_scores, rating_scores
+from src.evaluate import (bootstrap_ci, bootstrap_diff_ci, material_per_class, material_scores,
+                          rating_scores)
 
 RNG = np.random.default_rng(0)
 CLASSES = np.array(["cotton", "polyester", "leather", "wool"])
@@ -48,6 +49,23 @@ def test_integer_codes_give_the_same_macro_f1_as_strings():
     for seed in range(5):
         i = np.random.default_rng(seed).integers(0, len(Y_TRUE), size=len(Y_TRUE))
         assert f1_score(t[i], p[i], average="macro") == f1_score(Y_TRUE[i], Y_PRED[i], average="macro")
+
+
+def test_material_scores_include_accuracy():
+    scores = material_scores(Y_TRUE, Y_PRED)
+    assert scores["accuracy"] == accuracy_score(Y_TRUE, Y_PRED)
+    assert scores["macro_f1"] == f1_score(Y_TRUE, Y_PRED, average="macro")
+
+
+def test_per_class_matches_classification_report():
+    labels = sorted(CLASSES) + ["silk"]  # a class that is never predicted or present
+    table = material_per_class(Y_TRUE, Y_PRED, labels)
+    report = classification_report(Y_TRUE, Y_PRED, labels=labels, output_dict=True, zero_division=0)
+    assert list(table.material) == labels
+    for row in table.itertuples():
+        expected = report[row.material]
+        assert (row.precision, row.recall, row.f1, row.support) == (
+            expected["precision"], expected["recall"], expected["f1-score"], expected["support"])
 
 
 def test_diff_of_a_model_with_itself_is_zero():
